@@ -6,6 +6,9 @@ on:
     branches:
       - master
 
+env:
+  DOCKER_IMAGE: bilalcaliskan/varnish-cache-invalidator
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -80,18 +83,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get Previous tag from Git
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      - name: Get latest tag
+        id: latest_tag
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag bilalcaliskan/varnish-cache-invalidator:${{ steps.previoustag.outputs.tag }}
+        run: docker build . --file Dockerfile --tag ${{ DOCKER_IMAGE }}:${{ steps.latest_tag.outputs.tag }}
 
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           ## the name of our image
-          name: bilalcaliskan/varnish-cache-invalidator
+          name: ${{ DOCKER_IMAGE }}
           ## Here we pass in our Docker Username
           username: ${{ secrets.DOCKER_USERNAME }}
           ## and our Docker password which
