@@ -1,4 +1,7 @@
-# Authenticating inside the cluster
+## Varnish Cache Invalidator
+[![CI](https://github.com/bilalcaliskan/varnish-cache-invalidator/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/varnish-cache-invalidator/actions?query=workflow%3ACI)
+
+### Authenticating inside the cluster
 
 client-go uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) 
 mounted inside the Pod at the `/var/run/secrets/kubernetes.io/serviceaccount` path when the
