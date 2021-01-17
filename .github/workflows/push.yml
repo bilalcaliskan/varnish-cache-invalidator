@@ -6,9 +6,6 @@ on:
     branches:
       - master
 
-env:
-  DOCKER_IMAGE: bilalcaliskan/varnish-cache-invalidator
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -88,13 +85,13 @@ jobs:
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ DOCKER_IMAGE }}:${{ steps.latest_tag.outputs.tag }}
+        run: docker build . --file Dockerfile --tag bilalcaliskan/varnish-cache-invalidator:${{ steps.latest_tag.outputs.tag }}
 
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           ## the name of our image
-          name: ${{ DOCKER_IMAGE }}
+          name: bilalcaliskan/varnish-cache-invalidator
           ## Here we pass in our Docker Username
           username: ${{ secrets.DOCKER_USERNAME }}
           ## and our Docker password which
