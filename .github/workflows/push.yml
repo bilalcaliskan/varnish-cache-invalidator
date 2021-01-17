@@ -72,6 +72,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+          DEFAULT_BUMP: patch
 
   build-and-publish:
     runs-on: ubuntu-latest
@@ -80,17 +81,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get latest tag
-        id: latest_tag
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Get Previous tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag bilalcaliskan/varnish-cache-invalidator:${{ steps.latest_tag.outputs.tag }}
+        run: docker build . --file Dockerfile --tag bilalcaliskan/varnish-cache-invalidator:${{ steps.previoustag.outputs.tag }}
 
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: bilalcaliskan/varnish-cache-invalidator
-          tags: "latest,${{ steps.latest_tag.outputs.tag }}"
+          tags: "latest,${{ steps.previoustag.outputs.tag }}"
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
