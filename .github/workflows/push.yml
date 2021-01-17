@@ -90,9 +90,7 @@ jobs:
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          ## the name of our image
           name: bilalcaliskan/varnish-cache-invalidator
-          ## Here we pass in our Docker Username
+          tags: "latest,${{ steps.latest_tag.outputs.tag }}"
           username: ${{ secrets.DOCKER_USERNAME }}
-          ## and our Docker password which
           password: ${{ secrets.DOCKER_PASSWORD }}
