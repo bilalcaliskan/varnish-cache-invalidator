@@ -35,6 +35,9 @@ func runPodInformer(clientSet *kubernetes.Clientset, varnishLabelKey, varnishLab
 			oldPod := oldObj.(*v1.Pod)
 			newPod := newObj.(*v1.Pod)
 			labels := oldPod.GetLabels()
+
+			// TODO: Handle all the cases
+
 			for key, value := range labels {
 				if key == varnishLabelKey && value == varnishLabelValue && oldPod.ResourceVersion != newPod.ResourceVersion &&
 					oldPod.Namespace == varnishNamespace {
