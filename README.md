@@ -1,6 +1,10 @@
 ## Varnish Cache Invalidator
 [![CI](https://github.com/bilalcaliskan/varnish-cache-invalidator/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/varnish-cache-invalidator/actions?query=workflow%3ACI)
 
+This tool discovers kube-apiserver for standolone running open source Varnish pods and multiplexes `BAN` and `PURGE` requests 
+on them at the same time to manage cache properly. If you are using Varnish Enterprise, you already have that 
+feature.
+
 ### Authenticating inside the cluster
 
 client-go uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) 
