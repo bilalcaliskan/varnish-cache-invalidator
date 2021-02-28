@@ -1,4 +1,4 @@
-package http
+package web
 
 import (
 	"github.com/gorilla/mux"
@@ -13,7 +13,7 @@ func registerHandlers(router *mux.Router) {
 	router.HandleFunc("/purge", purgeHandler).Methods("PURGE").Schemes("http").Name("purge")
 }
 
-func InitServer(router *mux.Router, addr string, writeTimeout time.Duration, readTimeout time.Duration,
+func initServer(router *mux.Router, addr string, writeTimeout time.Duration, readTimeout time.Duration,
 	lgr *zap.Logger) *http.Server {
 
 	logger = lgr

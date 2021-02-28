@@ -1,25 +1,11 @@
-package http
+package web
 
 import (
 	"fmt"
 	"go.uber.org/zap"
 	"net/http"
-	"varnish-cache-invalidator/pkg/config"
 	"varnish-cache-invalidator/pkg/k8s"
 )
-
-var (
-	client *http.Client
-	purgeDomain string
-	logger *zap.Logger
-)
-
-func init() {
-	client = &http.Client{}
-	// purgeDomain will set Host header on purge requests. It must be changed to work properly on different environments.
-	// A purge request hit the Varnish must match the host of the cache object.
-	purgeDomain = config.GetStringEnv("PURGE_DOMAIN", "foo.example.com")
-}
 
 func banHandler(w http.ResponseWriter, r *http.Request) {
 	var successCount int
