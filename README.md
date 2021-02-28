@@ -19,6 +19,8 @@ via [sample config file](config/sample.yaml). Here is the list of variables you 
 
 ```
 SERVER_PORT             Web server port to handle incoming http requests. Defaults to "3000".
+METRICS_PORT            varnish-cache-invalidator exports prometheus metrics on specified port. Defaults 
+                        to "3001".
 WRITE_TIMEOUT_SECONDS   Maximum duration before timing out writes of the response. Defaults to "10".
 READ_TIMEOUT_SECONDS    Maximum duration for reading the entire request, including the body.
 VARNISH_NAMESPACE       Namespace of the Varnish pods. Defaults to "default".
