@@ -16,6 +16,7 @@ require (
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/phenomenes/vago v1.3.0
+	github.com/prometheus/client_golang v1.9.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.6.1 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
