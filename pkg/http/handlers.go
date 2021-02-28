@@ -1,11 +1,24 @@
-package main
+package http
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"varnish-cache-invalidator/pkg/config"
+	"varnish-cache-invalidator/pkg/k8s"
 )
+
+var (
+	client *http.Client
+	purgeDomain string
+)
+
+func init() {
+	client = &http.Client{}
+	// purgeDomain will set Host header on purge requests. It must be changed to work properly on different environments.
+	// A purge request hit the Varnish must match the host of the cache object.
+	purgeDomain = config.GetStringEnv("PURGE_DOMAIN", "foo.example.com")
+}
 
 func banHandler(w http.ResponseWriter, r *http.Request) {
 	var successCount int
@@ -17,7 +30,7 @@ func banHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, v := range varnishInstances {
+	for _, v := range k8s.VarnishInstances {
 		req, _ := http.NewRequest("BAN", *v, nil)
 		req.Header.Set("ban-url", banRegex)
 		log.Printf(  "Making BAN request on host %s\n", *v)
@@ -32,12 +45,12 @@ func banHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	if successCount == len(varnishInstances) {
+	if successCount == len(k8s.VarnishInstances) {
 		response = "All BAN requests succeeded on Varnish pods!"
 		w.WriteHeader(http.StatusOK)
 	} else {
 		response = fmt.Sprintf("One or more Varnish BAN requests failed, check the logs!\nSucceeded request = %d\n" +
-			"Failed request = %d", successCount, len(varnishInstances) - successCount)
+			"Failed request = %d", successCount, len(k8s.VarnishInstances) - successCount)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
@@ -54,7 +67,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, v := range varnishInstances {
+	for _, v := range k8s.VarnishInstances {
 		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
 		req, err := http.NewRequest("PURGE", fullUrl, nil)
 		if err != nil {
@@ -77,19 +90,14 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if successCount == len(varnishInstances) {
+	if successCount == len(k8s.VarnishInstances) {
 		response = "All PURGE requests succeeded on Varnish pods!"
 		w.WriteHeader(http.StatusOK)
 	} else {
 		response = fmt.Sprintf("One or more Varnish PURGE requests failed, check the logs!\nSucceeded request = %d\n" +
-			"Failed request = %d", successCount, len(varnishInstances) - successCount)
+			"Failed request = %d", successCount, len(k8s.VarnishInstances) - successCount)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
 	writeResponse(w, response)
-}
-
-func registerHandlers(router *mux.Router) {
-	router.HandleFunc("/ban", banHandler).Methods("BAN").Schemes("http").Name("ban")
-	router.HandleFunc("/purge", purgeHandler).Methods("PURGE").Schemes("http").Name("purge")
 }

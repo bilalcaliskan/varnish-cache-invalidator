@@ -1,4 +1,4 @@
-package main
+package k8s
 
 import (
 	"fmt"
@@ -8,10 +8,16 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 	"log"
+	"strings"
 	"time"
 )
 
-func runPodInformer(clientSet *kubernetes.Clientset, varnishLabelKey, varnishLabelValue, varnishNamespace string) {
+var VarnishInstances []*string
+
+func RunPodInformer(clientSet *kubernetes.Clientset, varnishLabel, varnishNamespace string) {
+	varnishLabelKey := strings.Split(varnishLabel, "=")[0]
+	varnishLabelValue := strings.Split(varnishLabel, "=")[1]
+
 	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second * 30)
 	podInformer := informerFactory.Core().V1().Pods()
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
@@ -23,7 +29,7 @@ func runPodInformer(clientSet *kubernetes.Clientset, varnishLabelKey, varnishLab
 					if pod.Status.PodIP != "" {
 						podString := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
 						log.Printf("adding podString %v to the varnishPods slice\n", podString)
-						addVarnishPod(&varnishInstances, &podString)
+						addVarnishPod(&VarnishInstances, &podString)
 					} else {
 						log.Printf("varnish pod %v on namespace %v not have an ip address yet, skipping add " +
 							"operation\n", pod.Name, pod.Namespace)
@@ -46,7 +52,7 @@ func runPodInformer(clientSet *kubernetes.Clientset, varnishLabelKey, varnishLab
 							"slice\n", newPod.Name, newPod.Namespace)
 						podString := fmt.Sprintf("http://%s:%d", newPod.Status.PodIP, newPod.Spec.Containers[0].Ports[0].ContainerPort)
 						log.Printf("adding podString %v to the varnishPods slice\n", podString)
-						addVarnishPod(&varnishInstances, &podString)
+						addVarnishPod(&VarnishInstances, &podString)
 					}
 				}
 			}
@@ -59,10 +65,10 @@ func runPodInformer(clientSet *kubernetes.Clientset, varnishLabelKey, varnishLab
 					log.Printf("pod %v is deleted on namespace %v, removing from varnishPods slice!\n", pod.Name,
 						pod.Namespace)
 					podString := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
-					index, found := findVarnishPod(varnishInstances, podString)
+					index, found := findVarnishPod(VarnishInstances, podString)
 					if found {
 						log.Printf("deleted pod %v found on the varnishPods slice, removing!\n", pod.Name)
-						removeVarnishPod(&varnishInstances, index)
+						removeVarnishPod(&VarnishInstances, index)
 					}
 				}
 			}
