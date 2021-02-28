@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"time"
@@ -12,7 +13,10 @@ func registerHandlers(router *mux.Router) {
 	router.HandleFunc("/purge", purgeHandler).Methods("PURGE").Schemes("http").Name("purge")
 }
 
-func InitServer(router *mux.Router, addr string, writeTimeout time.Duration, readTimeout time.Duration) *http.Server {
+func InitServer(router *mux.Router, addr string, writeTimeout time.Duration, readTimeout time.Duration,
+	lgr *zap.Logger) *http.Server {
+
+	logger = lgr
 	registerHandlers(router)
 	return &http.Server{
 		Handler: router,
