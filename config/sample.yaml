@@ -51,8 +51,6 @@ spec:
               value: 'true'
             - name: PURGE_DOMAIN
               value: gateway.example.com
-            - name: TICKER_INTERVAL_SECONDS
-              value: '30'
           image: 'docker.io/bilalcaliskan/varnish-cache-invalidator:latest'
           imagePullPolicy: Always
           livenessProbe:
@@ -66,6 +64,8 @@ spec:
           name: varnish
           ports:
             - containerPort: 3000
+              protocol: TCP
+            - containerPort: 3001
               protocol: TCP
           readinessProbe:
             failureThreshold: 3
@@ -90,6 +90,10 @@ spec:
       port: 3000
       protocol: TCP
       targetPort: 3000
+    - name: 3001-tcp
+      port: 3001
+      protocol: TCP
+      targetPort: 3001
   selector:
     app: varnish-cache-invalidator
     deployment: varnish-cache-invalidator
