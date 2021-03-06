@@ -1,6 +1,6 @@
 module varnish-cache-invalidator
 
-go 1.15
+go 1.16
 
 require (
 	github.com/ghodss/yaml v1.0.0 // indirect
@@ -15,7 +15,7 @@ require (
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-	github.com/phenomenes/vago v1.3.0
+	github.com/phenomenes/vago v1.3.0 // indirect
 	github.com/prometheus/client_golang v1.9.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.6.1 // indirect
