@@ -1,15 +1,27 @@
 package config
 
 import (
-	"log"
+	"go.uber.org/zap"
 	"os"
 	"strconv"
 )
 
+var (
+	logger *zap.Logger
+	err error
+)
+
+func init() {
+	logger, err = zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func convertStringToInt(s string) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		log.Printf("An error occured while converting %s to int. Setting it as zero.", s)
+		logger.Warn("An error occured while converting from string to int, setting it as zero.", zap.String("string", s))
 		i = 0
 	}
 	return i
@@ -18,7 +30,7 @@ func convertStringToInt(s string) int {
 func convertStringToBool(s string) bool {
 	i, err := strconv.ParseBool(s)
 	if err != nil {
-		log.Printf("An error occured while converting %s to int. Setting it as zero.", s)
+		logger.Warn("An error occured while converting from string to bool, setting it as false.", zap.String("string", s))
 		i = false
 	}
 	return i
