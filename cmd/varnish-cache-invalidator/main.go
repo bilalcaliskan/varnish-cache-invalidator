@@ -20,7 +20,6 @@ var (
 	clientSet *kubernetes.Clientset
 	masterUrl, kubeConfigPath, varnishNamespace, varnishLabel, targetHosts string
 	inCluster bool
-	err error
 )
 
 func init() {
