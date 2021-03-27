@@ -9,6 +9,7 @@ import (
 	"strings"
 	"varnish-cache-invalidator/pkg/config"
 	"varnish-cache-invalidator/pkg/k8s"
+	"varnish-cache-invalidator/pkg/logging"
 	"varnish-cache-invalidator/pkg/metrics"
 	"varnish-cache-invalidator/pkg/web"
 )
@@ -23,10 +24,7 @@ var (
 )
 
 func init() {
-	logger, err = zap.NewProduction()
-	if err != nil {
-		panic(err)
-	}
+	logger = logging.GetLogger()
 
 	masterUrl = config.GetStringEnv("MASTER_URL", "")
 	kubeConfigPath = config.GetStringEnv("KUBE_CONFIG_PATH", filepath.Join(os.Getenv("HOME"), ".kube", "config"))
@@ -62,7 +60,7 @@ func main() {
 
 	// below check ensures that we will use our Varnish instances as Kubernetes pods
 	if targetHosts == "" {
-		go k8s.RunPodInformer(clientSet, varnishLabel, varnishNamespace, logger)
+		go k8s.RunPodInformer(clientSet, varnishLabel, varnishNamespace)
 	} else {
 		// TODO: Check the case that Varnish instances are not running inside Kubernetes. Check them after standalone installation
 		splitted := strings.Split(targetHosts, ",")

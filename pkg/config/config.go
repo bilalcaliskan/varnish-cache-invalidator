@@ -4,19 +4,10 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"strconv"
+	"varnish-cache-invalidator/pkg/logging"
 )
 
-var (
-	logger *zap.Logger
-	err error
-)
-
-func init() {
-	logger, err = zap.NewProduction()
-	if err != nil {
-		panic(err)
-	}
-}
+var logger = logging.GetLogger()
 
 func convertStringToInt(s string) int {
 	i, err := strconv.Atoi(s)

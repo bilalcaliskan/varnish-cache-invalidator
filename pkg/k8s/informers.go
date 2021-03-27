@@ -10,11 +10,13 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"strings"
 	"time"
+	"varnish-cache-invalidator/pkg/logging"
 )
 
 var VarnishInstances []*string
+var logger = logging.GetLogger()
 
-func RunPodInformer(clientSet *kubernetes.Clientset, varnishLabel, varnishNamespace string, logger *zap.Logger) {
+func RunPodInformer(clientSet *kubernetes.Clientset, varnishLabel, varnishNamespace string) {
 	varnishLabelKey := strings.Split(varnishLabel, "=")[0]
 	varnishLabelValue := strings.Split(varnishLabel, "=")[1]
 

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 	"varnish-cache-invalidator/pkg/config"
+	"varnish-cache-invalidator/pkg/logging"
 )
 
 var (
@@ -14,14 +15,10 @@ var (
 	purgeDomain string
 	logger *zap.Logger
 	serverPort, writeTimeoutSeconds, readTimeoutSeconds int
-	err error
 )
 
 func init() {
-	logger, err = zap.NewProduction()
-	if err != nil {
-		panic(err)
-	}
+	logger = logging.GetLogger()
 	client = &http.Client{}
 	// purgeDomain will set Host header on purge requests. It must be changed to work properly on different environments.
 	// A purge request hit the Varnish must match the host of the cache object.

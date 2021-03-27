@@ -8,19 +8,16 @@ import (
 	"net/http"
 	"time"
 	"varnish-cache-invalidator/pkg/config"
+	"varnish-cache-invalidator/pkg/logging"
 )
 
 var (
 	logger *zap.Logger
 	metricsPort, writeTimeoutSeconds, readTimeoutSeconds int
-	err error
 )
 
 func init() {
-	logger, err = zap.NewProduction()
-	if err != nil {
-		panic(err)
-	}
+	logger = logging.GetLogger()
 	metricsPort = config.GetIntEnv("METRICS_PORT", 3001)
 	writeTimeoutSeconds = config.GetIntEnv("WRITE_TIMEOUT_SECONDS", 10)
 	readTimeoutSeconds = config.GetIntEnv("READ_TIMEOUT_SECONDS", 10)
