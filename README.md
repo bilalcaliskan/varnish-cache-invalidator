@@ -1,5 +1,6 @@
 # Varnish Cache Invalidator
 [![CI](https://github.com/bilalcaliskan/varnish-cache-invalidator/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/varnish-cache-invalidator/actions?query=workflow%3ACI)
+[![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/varnish-cache-invalidator)](https://hub.docker.com/r/bilalcaliskan/varnish-cache-invalidator/)
 
 This tool discovers kube-apiserver for running [Varnish](https://github.com/varnishcache/varnish-cache) pods inside 
 Kubernetes and multiplexes `BAN` and `PURGE` requests on them at the same time to manage the cache properly. If you are 
