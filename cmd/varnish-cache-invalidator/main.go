@@ -16,11 +16,11 @@ import (
 )
 
 var (
-	router *mux.Router
-	logger *zap.Logger
-	clientSet *kubernetes.Clientset
+	router                                                                 *mux.Router
+	logger                                                                 *zap.Logger
+	clientSet                                                              *kubernetes.Clientset
 	masterUrl, kubeConfigPath, varnishNamespace, varnishLabel, targetHosts string
-	inCluster bool
+	inCluster                                                              bool
 )
 
 func init() {
@@ -32,7 +32,7 @@ func init() {
 	varnishLabel = config.GetStringEnv("VARNISH_LABEL", "app=varnish")
 	inCluster = config.GetBoolEnv("IN_CLUSTER", false)
 	// targetHosts used when our Varnish instances are not running in Kubernetes as a pod
-	// use comma seperated list of instances. ex: TARGET_HOSTS=http://172.17.0.7:6081,http://172.17.0.8:6081
+	// use comma separated list of instances. ex: TARGET_HOSTS=http://172.17.0.7:6081,http://172.17.0.8:6081
 	targetHosts = config.GetStringEnv("TARGET_HOSTS", "")
 
 	router = mux.NewRouter()
@@ -50,12 +50,12 @@ func main() {
 		zap.String("kubeConfigPath", kubeConfigPath), zap.Bool("inCluster", inCluster))
 	restConfig, err := k8s.GetConfig(masterUrl, kubeConfigPath, inCluster)
 	if err != nil {
-		logger.Fatal("fatal error occured while initializing kube client", zap.String("error", err.Error()))
+		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
 	}
 
 	clientSet, err = k8s.GetClientSet(restConfig)
 	if err != nil {
-		logger.Fatal("fatal error occured while getting client set", zap.String("error", err.Error()))
+		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
 	}
 
 	// below check ensures that we will use our Varnish instances as Kubernetes pods

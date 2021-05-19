@@ -26,6 +26,7 @@ func removeVarnishPod(varnishPods *[]*string, index int) {
 	*varnishPods = append((*varnishPods)[:index], (*varnishPods)[index+1:]...)
 }
 
+// GetConfig initializes and returns the *rest.Config
 func GetConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, error) {
 	var config *rest.Config
 	var err error
@@ -43,6 +44,7 @@ func GetConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, 
 	return config, nil
 }
 
+// GetClientSet initializes and returns *kubernetes.Clientset using *rest.Config
 func GetClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
 	clientSet, err := kubernetes.NewForConfig(config)
 	if err != nil {

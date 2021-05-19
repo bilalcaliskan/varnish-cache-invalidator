@@ -24,7 +24,7 @@ func banHandler(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Making BAN request", zap.String("requestMethod", "BAN"), zap.String("targetHost", *v))
 		res, err := client.Do(req)
 		if err != nil {
-			logger.Error("An error occured while making BAN request", zap.String("requestMethod", "BAN"),
+			logger.Error("An error occurred while making BAN request", zap.String("requestMethod", "BAN"),
 				zap.String("error", err.Error()))
 		}
 
@@ -40,9 +40,9 @@ func banHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		logger.Warn("One or more Varnish BAN requests failed", zap.String("requestMethod", "BAN"),
-			zap.Int("successCount", successCount), zap.Int("failureCount", len(k8s.VarnishInstances) - successCount))
-		response = fmt.Sprintf("One or more Varnish BAN requests failed, check the logs!\nSucceeded request = %d\n" +
-			"Failed request = %d", successCount, len(k8s.VarnishInstances) - successCount)
+			zap.Int("successCount", successCount), zap.Int("failureCount", len(k8s.VarnishInstances)-successCount))
+		response = fmt.Sprintf("One or more Varnish BAN requests failed, check the logs!\nSucceeded request = %d\n"+
+			"Failed request = %d", successCount, len(k8s.VarnishInstances)-successCount)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
@@ -68,7 +68,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Making PURGE request", zap.String("requestMethod", "PURGE"), zap.String("targetHost", *v))
 		res, err := client.Do(req)
 		if err != nil {
-			logger.Error("An error occured while making PURGE request", zap.String("requestMethod", "PURGE"),
+			logger.Error("An error occurred while making PURGE request", zap.String("requestMethod", "PURGE"),
 				zap.String("error", err.Error()))
 		}
 
@@ -83,9 +83,9 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		logger.Warn("One or more Varnish PURGE requests failed", zap.String("requestMethod", "PURGE"),
-			zap.Int("successCount", successCount), zap.Int("failureCount", len(k8s.VarnishInstances) - successCount))
-		response = fmt.Sprintf("One or more Varnish PURGE requests failed, check the logs!\nSucceeded request = %d\n" +
-			"Failed request = %d", successCount, len(k8s.VarnishInstances) - successCount)
+			zap.Int("successCount", successCount), zap.Int("failureCount", len(k8s.VarnishInstances)-successCount))
+		response = fmt.Sprintf("One or more Varnish PURGE requests failed, check the logs!\nSucceeded request = %d\n"+
+			"Failed request = %d", successCount, len(k8s.VarnishInstances)-successCount)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 

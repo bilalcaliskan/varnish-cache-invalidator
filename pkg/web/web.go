@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	client *http.Client
-	purgeDomain string
-	logger *zap.Logger
+	client                                              *http.Client
+	purgeDomain                                         string
+	logger                                              *zap.Logger
 	serverPort, writeTimeoutSeconds, readTimeoutSeconds int
 )
 
@@ -28,6 +28,7 @@ func init() {
 	readTimeoutSeconds = config.GetIntEnv("READ_TIMEOUT_SECONDS", 10)
 }
 
+// RunWebServer runs the web server which multiplexes client requests
 func RunWebServer(router *mux.Router) {
 	defer func() {
 		err := logger.Sync()
@@ -36,8 +37,8 @@ func RunWebServer(router *mux.Router) {
 		}
 	}()
 
-	webServer := initServer(router, fmt.Sprintf(":%d", serverPort), time.Duration(int32(writeTimeoutSeconds)) * time.Second,
-		time.Duration(int32(readTimeoutSeconds)) * time.Second, logger)
+	webServer := initServer(router, fmt.Sprintf(":%d", serverPort), time.Duration(int32(writeTimeoutSeconds))*time.Second,
+		time.Duration(int32(readTimeoutSeconds))*time.Second, logger)
 
 	logger.Info("web server is up and running", zap.Int("port", serverPort))
 	panic(webServer.ListenAndServe())

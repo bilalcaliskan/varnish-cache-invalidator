@@ -13,14 +13,17 @@ import (
 	"varnish-cache-invalidator/pkg/logging"
 )
 
+// VarnishInstances keeps pointer of varnish instances' ip:port information
 var VarnishInstances []*string
 var logger = logging.GetLogger()
 
+// RunPodInformer continuously watches api-server with shared informer for Pod resources, then does necessary updates
+// on Add/Update/Delete conditions
 func RunPodInformer(clientSet *kubernetes.Clientset, varnishLabel, varnishNamespace string) {
 	varnishLabelKey := strings.Split(varnishLabel, "=")[0]
 	varnishLabelValue := strings.Split(varnishLabel, "=")[1]
 
-	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second * 30)
+	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second*30)
 	podInformer := informerFactory.Core().V1().Pods()
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {

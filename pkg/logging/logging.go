@@ -4,7 +4,7 @@ import "go.uber.org/zap"
 
 var (
 	logger *zap.Logger
-	err error
+	err    error
 )
 
 func init() {
@@ -14,6 +14,7 @@ func init() {
 	}
 }
 
+// GetLogger returns the common *zap.Logger
 func GetLogger() *zap.Logger {
 	return logger
 }
