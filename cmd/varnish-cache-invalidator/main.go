@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "github.com/dimiro1/banner/autoload"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
