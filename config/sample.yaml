@@ -44,11 +44,12 @@ spec:
     spec:
       serviceAccountName: varnish-cache-invalidator
       containers:
-        - command: ["main"]
-          args:
-            - "--varnishNamespace='hasan'"
-            - "--varnishLabel='app=varnish'"
-            - "--inCluster=true"
+        - command: [ "./main" ]
+          args: [
+            "--varnishNamespace", "default",
+            "--varnishLabel", "'app=varnish'",
+            "--inCluster", "true"
+          ]
           image: 'docker.io/bilalcaliskan/varnish-cache-invalidator:latest'
           imagePullPolicy: Always
           livenessProbe:
