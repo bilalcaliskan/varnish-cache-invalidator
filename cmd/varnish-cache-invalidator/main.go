@@ -16,10 +16,10 @@ import (
 )
 
 var (
-	router                                                                 *mux.Router
-	logger                                                                 *zap.Logger
-	clientSet                                                              *kubernetes.Clientset
-	vcio																   *options.VarnishCacheInvalidatorOptions
+	router    *mux.Router
+	logger    *zap.Logger
+	clientSet *kubernetes.Clientset
+	vcio      *options.VarnishCacheInvalidatorOptions
 )
 
 func init() {

@@ -37,7 +37,7 @@ type VarnishCacheInvalidatorOptions struct {
 }
 
 func (vcio *VarnishCacheInvalidatorOptions) addFlags(fs *pflag.FlagSet) {
-	fs.StringVar(&vcio.MasterUrl, "masterUrl", "", "MasterUrl is the url of the kube-apiserver. " +
+	fs.StringVar(&vcio.MasterUrl, "masterUrl", "", "MasterUrl is the url of the kube-apiserver. "+
 		"Not needed if kubeconfig provided")
 	fs.StringVar(&vcio.KubeConfigPath, "kubeconfigPath", filepath.Join(os.Getenv("HOME"), ".kube", "config"),
 		"KubeConfigPath is the path of the kubeconfig file to access the cluster")
