@@ -7,12 +7,11 @@ import (
 	"io/ioutil"
 	"k8s.io/client-go/kubernetes"
 	"os"
-	"path/filepath"
 	"strings"
-	"varnish-cache-invalidator/pkg/config"
 	"varnish-cache-invalidator/pkg/k8s"
 	"varnish-cache-invalidator/pkg/logging"
 	"varnish-cache-invalidator/pkg/metrics"
+	"varnish-cache-invalidator/pkg/options"
 	"varnish-cache-invalidator/pkg/web"
 )
 
@@ -20,24 +19,13 @@ var (
 	router                                                                 *mux.Router
 	logger                                                                 *zap.Logger
 	clientSet                                                              *kubernetes.Clientset
-	masterUrl, kubeConfigPath, varnishNamespace, varnishLabel, targetHosts string
-	inCluster                                                              bool
+	vcio																   *options.VarnishCacheInvalidatorOptions
 )
 
 func init() {
 	logger = logging.GetLogger()
-
-	masterUrl = config.GetStringEnv("MASTER_URL", "")
-	kubeConfigPath = config.GetStringEnv("KUBE_CONFIG_PATH", filepath.Join(os.Getenv("HOME"), ".kube", "config"))
-	varnishNamespace = config.GetStringEnv("VARNISH_NAMESPACE", "default")
-	varnishLabel = config.GetStringEnv("VARNISH_LABEL", "app=varnish")
-	inCluster = config.GetBoolEnv("IN_CLUSTER", false)
-	// targetHosts used when our Varnish instances are not running in Kubernetes as a pod
-	// use comma separated list of instances. ex: TARGET_HOSTS=http://172.17.0.7:6081,http://172.17.0.8:6081
-	targetHosts = config.GetStringEnv("TARGET_HOSTS", "")
-
+	vcio = options.GetVarnishCacheInvalidatorOptions()
 	router = mux.NewRouter()
-
 	bannerBytes, _ := ioutil.ReadFile("banner.txt")
 	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
 }
@@ -50,9 +38,9 @@ func main() {
 		}
 	}()
 
-	logger.Info("initializing kube client", zap.String("masterUrl", masterUrl),
-		zap.String("kubeConfigPath", kubeConfigPath), zap.Bool("inCluster", inCluster))
-	restConfig, err := k8s.GetConfig(masterUrl, kubeConfigPath, inCluster)
+	logger.Info("initializing kube client", zap.String("masterUrl", vcio.MasterUrl),
+		zap.String("kubeConfigPath", vcio.KubeConfigPath), zap.Bool("inCluster", vcio.InCluster))
+	restConfig, err := k8s.GetConfig(vcio.MasterUrl, vcio.KubeConfigPath, vcio.InCluster)
 	if err != nil {
 		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
 	}
@@ -63,11 +51,11 @@ func main() {
 	}
 
 	// below check ensures that we will use our Varnish instances as Kubernetes pods
-	if targetHosts == "" {
-		go k8s.RunPodInformer(clientSet, varnishLabel, varnishNamespace)
+	if vcio.TargetHosts == "" {
+		go k8s.RunPodInformer(clientSet, vcio.VarnishLabel, vcio.VarnishNamespace)
 	} else {
 		// TODO: Check the case that Varnish instances are not running inside Kubernetes. Check them after standalone installation
-		splitted := strings.Split(targetHosts, ",")
+		splitted := strings.Split(vcio.TargetHosts, ",")
 		for _, v := range splitted {
 			k8s.VarnishInstances = append(k8s.VarnishInstances, &v)
 		}
