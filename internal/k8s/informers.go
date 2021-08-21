@@ -10,7 +10,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"strings"
 	"time"
-	"varnish-cache-invalidator/pkg/logging"
+	"varnish-cache-invalidator/internal/logging"
 )
 
 // VarnishInstances keeps pointer of varnish instances' ip:port information

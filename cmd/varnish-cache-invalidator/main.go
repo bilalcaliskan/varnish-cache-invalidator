@@ -8,11 +8,11 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"os"
 	"strings"
-	"varnish-cache-invalidator/pkg/k8s"
-	"varnish-cache-invalidator/pkg/logging"
-	"varnish-cache-invalidator/pkg/metrics"
-	"varnish-cache-invalidator/pkg/options"
-	"varnish-cache-invalidator/pkg/web"
+	"varnish-cache-invalidator/internal/k8s"
+	"varnish-cache-invalidator/internal/logging"
+	"varnish-cache-invalidator/internal/metrics"
+	"varnish-cache-invalidator/internal/options"
+	"varnish-cache-invalidator/internal/web"
 )
 
 var (

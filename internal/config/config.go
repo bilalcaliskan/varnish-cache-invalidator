@@ -4,7 +4,7 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"strconv"
-	"varnish-cache-invalidator/pkg/logging"
+	"varnish-cache-invalidator/internal/logging"
 )
 
 var logger = logging.GetLogger()

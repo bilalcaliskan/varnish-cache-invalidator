@@ -7,8 +7,8 @@ import (
 	"go.uber.org/zap"
 	"net/http"
 	"time"
-	"varnish-cache-invalidator/pkg/config"
-	"varnish-cache-invalidator/pkg/logging"
+	"varnish-cache-invalidator/internal/config"
+	"varnish-cache-invalidator/internal/logging"
 )
 
 var (

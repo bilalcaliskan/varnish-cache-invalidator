@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"net/http"
-	"varnish-cache-invalidator/pkg/k8s"
+	"varnish-cache-invalidator/internal/k8s"
 )
 
 func banHandler(w http.ResponseWriter, r *http.Request) {
