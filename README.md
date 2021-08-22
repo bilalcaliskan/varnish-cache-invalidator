@@ -9,7 +9,7 @@ using Varnish Enterprise, you already have that feature.
 
 ## Deployment
 Varnish-cache-invalidator should be running inside the Kubernetes cluster to properly multiplex incoming requests.
-You can use [sample config file](config/sample.yaml) to deploy your Kubernetes cluster.
+You can use [sample deployment file](deployment/sample.yaml) to deploy your Kubernetes cluster.
 
 ```shell
 $ kubectl create -f config/sample.yaml
@@ -17,7 +17,7 @@ $ kubectl create -f config/sample.yaml
 
 ### Customization
 Varnish-cache-invalidator can be customized with several environment variables. You can pass environment variables
-via [sample config file](config/sample.yaml). Here is the list of variables you can pass:
+via [sample deployment file](deployment/sample.yaml). Here is the list of variables you can pass:
 
 ```
 SERVER_PORT             Web server port to handle incoming http requests. Defaults to "3000".
@@ -50,7 +50,7 @@ varnish-cache-invalidator uses [client-go](https://github.com/kubernetes/client-
 with `kube-apiserver`. [client-go](https://github.com/kubernetes/client-go) uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
 mounted inside the Pod at the `/var/run/secrets/kubernetes.io/serviceaccount` path while initializing the client.
 
-If you have RBAC enabled on your cluster, when you applied the sample deployment file [config/sample.yaml](config/sample.yaml),
+If you have RBAC enabled on your cluster, when you applied the sample deployment file [deployment/sample.yaml](deployment/sample.yaml),
 it will create required serviceaccount and clusterrolebinding and then use that serviceaccount to be used
 by our varnish-cache-invalidator pods.
 
