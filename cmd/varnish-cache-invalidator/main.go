@@ -1,11 +1,7 @@
 package main
 
 import (
-	"github.com/dimiro1/banner"
-	"github.com/gorilla/mux"
-	"go.uber.org/zap"
 	"io/ioutil"
-	"k8s.io/client-go/kubernetes"
 	"os"
 	"strings"
 	"varnish-cache-invalidator/internal/k8s"
@@ -13,13 +9,16 @@ import (
 	"varnish-cache-invalidator/internal/metrics"
 	"varnish-cache-invalidator/internal/options"
 	"varnish-cache-invalidator/internal/web"
+
+	"github.com/dimiro1/banner"
+	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 )
 
 var (
-	router    *mux.Router
-	logger    *zap.Logger
-	clientSet *kubernetes.Clientset
-	vcio      *options.VarnishCacheInvalidatorOptions
+	router *mux.Router
+	logger *zap.Logger
+	vcio   *options.VarnishCacheInvalidatorOptions
 )
 
 func init() {
@@ -38,21 +37,9 @@ func main() {
 		}
 	}()
 
-	logger.Info("initializing kube client", zap.String("masterUrl", vcio.MasterUrl),
-		zap.String("kubeConfigPath", vcio.KubeConfigPath), zap.Bool("inCluster", vcio.InCluster))
-	restConfig, err := k8s.GetConfig(vcio.MasterUrl, vcio.KubeConfigPath, vcio.InCluster)
-	if err != nil {
-		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
-	}
-
-	clientSet, err = k8s.GetClientSet(restConfig)
-	if err != nil {
-		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
-	}
-
 	// below check ensures that we will use our Varnish instances as Kubernetes pods
 	if vcio.TargetHosts == "" {
-		go k8s.RunPodInformer(clientSet, vcio.VarnishLabel, vcio.VarnishNamespace)
+		go k8s.RunPodInformer()
 	} else {
 		// TODO: Check the case that Varnish instances are not running inside Kubernetes. Check them after standalone installation
 		splitted := strings.Split(vcio.TargetHosts, ",")

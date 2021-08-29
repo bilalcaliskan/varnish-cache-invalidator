@@ -2,9 +2,10 @@ package web
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"net/http"
 	"varnish-cache-invalidator/internal/k8s"
+
+	"go.uber.org/zap"
 )
 
 func banHandler(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +64,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 	for _, v := range k8s.VarnishInstances {
 		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
-		req.Host = purgeDomain
+		req.Host = vcio.PurgeDomain
 
 		logger.Info("Making PURGE request", zap.String("requestMethod", "PURGE"), zap.String("targetHost", *v))
 		res, err := client.Do(req)

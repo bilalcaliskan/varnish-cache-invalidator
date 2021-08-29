@@ -2,25 +2,24 @@ package metrics
 
 import (
 	"fmt"
+	"net/http"
+	"time"
+	"varnish-cache-invalidator/internal/logging"
+	"varnish-cache-invalidator/internal/options"
+
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
-	"net/http"
-	"time"
-	"varnish-cache-invalidator/internal/config"
-	"varnish-cache-invalidator/internal/logging"
 )
 
 var (
-	logger                                               *zap.Logger
-	metricsPort, writeTimeoutSeconds, readTimeoutSeconds int
+	logger *zap.Logger
+	vcio   *options.VarnishCacheInvalidatorOptions
 )
 
 func init() {
 	logger = logging.GetLogger()
-	metricsPort = config.GetIntEnv("METRICS_PORT", 3001)
-	writeTimeoutSeconds = config.GetIntEnv("WRITE_TIMEOUT_SECONDS", 10)
-	readTimeoutSeconds = config.GetIntEnv("READ_TIMEOUT_SECONDS", 10)
+	vcio = options.GetVarnishCacheInvalidatorOptions()
 }
 
 // TODO: Generate custom metrics, check below:
@@ -38,11 +37,11 @@ func RunMetricsServer(router *mux.Router) {
 
 	metricServer := &http.Server{
 		Handler:      router,
-		Addr:         fmt.Sprintf(":%d", metricsPort),
-		WriteTimeout: time.Duration(int32(writeTimeoutSeconds)) * time.Second,
-		ReadTimeout:  time.Duration(int32(readTimeoutSeconds)) * time.Second,
+		Addr:         fmt.Sprintf(":%d", vcio.MetricsPort),
+		WriteTimeout: time.Duration(int32(vcio.WriteTimeoutSeconds)) * time.Second,
+		ReadTimeout:  time.Duration(int32(vcio.ReadTimeoutSeconds)) * time.Second,
 	}
 	router.Handle("/metrics", promhttp.Handler())
-	logger.Info("metric server is up and running", zap.Int("port", metricsPort))
+	logger.Info("metric server is up and running", zap.Int("port", vcio.MetricsPort))
 	panic(metricServer.ListenAndServe())
 }

@@ -2,12 +2,13 @@ package metrics
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"go.uber.org/zap"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.uber.org/zap"
 )
 
 func TestRunMetricsServer(t *testing.T) {
@@ -17,12 +18,12 @@ func TestRunMetricsServer(t *testing.T) {
 		router := mux.NewRouter()
 		metricServer := &http.Server{
 			Handler:      router,
-			Addr:         fmt.Sprintf(":%d", metricsPort),
-			WriteTimeout: time.Duration(int32(writeTimeoutSeconds)) * time.Second,
-			ReadTimeout:  time.Duration(int32(readTimeoutSeconds)) * time.Second,
+			Addr:         fmt.Sprintf(":%d", vcio.MetricsPort),
+			WriteTimeout: time.Duration(int32(vcio.WriteTimeoutSeconds)) * time.Second,
+			ReadTimeout:  time.Duration(int32(vcio.ReadTimeoutSeconds)) * time.Second,
 		}
 		router.Handle("/metrics", promhttp.Handler())
-		logger.Info("metric server is up and running", zap.Int("port", metricsPort))
+		logger.Info("metric server is up and running", zap.Int("port", vcio.MetricsPort))
 		errChan <- metricServer.ListenAndServe()
 	}()
 

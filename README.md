@@ -2,41 +2,53 @@
 [![CI](https://github.com/bilalcaliskan/varnish-cache-invalidator/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/varnish-cache-invalidator/actions?query=workflow%3ACI)
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/varnish-cache-invalidator)](https://hub.docker.com/r/bilalcaliskan/varnish-cache-invalidator/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/varnish-cache-invalidator)](https://goreportcard.com/report/github.com/bilalcaliskan/varnish-cache-invalidator)
+[![codecov](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator)
 
 This tool discovers kube-apiserver for running [Varnish](https://github.com/varnishcache/varnish-cache) pods inside
-Kubernetes and multiplexes `BAN` and `PURGE` requests on them at the same time to manage the cache properly. If you are
+Kubernetes and multiplexes **BAN** and **PURGE** requests on them at the same time to manage the cache properly. If you are
 using Varnish Enterprise, you already have that feature.
 
-## Deployment
-Varnish-cache-invalidator should be running inside the Kubernetes cluster to properly multiplex incoming requests.
+### Download
+
+#### Kubernetes
+Varnish-cache-invalidator can be run inside a Kubernetes cluster to multiplex requests for in-cluster Varnish containers.
 You can use [sample deployment file](deployment/sample.yaml) to deploy your Kubernetes cluster.
 
 ```shell
 $ kubectl create -f config/sample.yaml
 ```
 
+#### Binary
+Binary can be downloaded from [Releases](https://github.com/bilalcaliskan/nginx-conf-generator/releases) page. You can
+use binary method to manage standalone Varnish instances, not in Kubernetes.
+
+After then, you can simply run binary by providing required command line arguments:
+```shell
+$ ./varnish-cache-invalidator --inCluster false targetHosts 10.0.0.100:6081,10.0.0.101:6081,10.0.0.102:6081
+```
+
 ### Customization
-Varnish-cache-invalidator can be customized with several environment variables. You can pass environment variables
-via [sample deployment file](deployment/sample.yaml). Here is the list of variables you can pass:
+Varnish-cache-invalidator can be customized with several command line arguments. You can pass command line arguments via
+[sample deployment file](deployment/sample.yaml). Here is the list of arguments you can pass:
 
 ```
-SERVER_PORT             Web server port to handle incoming http requests. Defaults to "3000".
-METRICS_PORT            varnish-cache-invalidator exports prometheus metrics on specified port. Defaults
-                        to "3001".
-WRITE_TIMEOUT_SECONDS   Maximum duration before timing out writes of the response. Defaults to "10".
-READ_TIMEOUT_SECONDS    Maximum duration for reading the entire request, including the body.
-VARNISH_NAMESPACE       Namespace of the Varnish pods. Defaults to "default".
-VARNISH_LABEL           varnish-cache-invalidator fetches Add/Update/Delete events from kube-apiserver.
-                        Label will help us choosing correct Varnish pods. Defaults to "app=varnish".
-MASTER_URL              Additional url to kube-apiserver. There is no need to specify anything here
+--masterUrl             Additional url to kube-apiserver. There is no need to specify anything here
                         since we are using serviceAccount to access kube-apiserver. Defaults to "".
-KUBE_CONFIG_PATH        Kubeconfig path to access to cluster while running the code out of cluster.
-                        Required for development purposes. Defaults to "~/.kube/config".
-IN_CLUSTER              Specify if we are running the code out of cluster. Required for development purposes.
-                        Defaults to "false".
-TARGET_HOSTS            Comma seperated lists of target hosts while our Varnish instances are
-                        not running in Kubernetes as pods. Designed for standalone installations but
-                        not actively used. Defaults to "" but not required when IN_CLUSTER=true.
+--kubeconfigPath        KubeConfigPath is the path of the kubeconfig file to access the cluster.
+                        Defaults to ~/.kube/config
+--varnishNamespace      VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace
+--varnishLabel          VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish
+--inCluster             InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not,
+                        defaults to true
+--targetHosts           TargetHosts used when our Varnish instances(comma seperated) are not running in Kubernetes as
+                        a pod, required for standalone Varnish instances, defaults to ''
+
+--purgeDomain           PurgeDomain will set Host header on purge requests. It must be changed to work properly on
+                        different environments.
+--serverPort            ServerPort is the web server port of the varnish-cache-invalidator, defaults to 3000
+--metricsPort           MetricsPort is the port of the metrics server, defaults to 3001
+--writeTimeoutSeconds   WriteTimeoutSeconds is the write timeout of the both web server and metrics server, defaults to 10
+--readTimeoutSeconds    ReadTimeoutSeconds is the read timeout of the both web server and metrics server, defaults to 10
 ```
 
 ### Development
@@ -44,7 +56,7 @@ This project requires below tools while developing:
 - [pre-commit](https://pre-commit.com/)
 - [golangci-lint](https://golangci-lint.run/usage/install/) - required by [pre-commit](https://pre-commit.com/)
 
-### How varnish-cache-invalidator handles authentication with kube-apiserver?
+#### How varnish-cache-invalidator handles authentication with kube-apiserver?
 
 varnish-cache-invalidator uses [client-go](https://github.com/kubernetes/client-go) to interact
 with `kube-apiserver`. [client-go](https://github.com/kubernetes/client-go) uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
