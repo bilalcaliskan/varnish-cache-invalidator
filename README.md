@@ -8,9 +8,8 @@ This tool discovers kube-apiserver for running [Varnish](https://github.com/varn
 Kubernetes and multiplexes **BAN** and **PURGE** requests on them at the same time to manage the cache properly. If you are
 using Varnish Enterprise, you already have that feature.
 
-### Download
-
-#### Kubernetes
+## Installation
+### Kubernetes
 Varnish-cache-invalidator can be run inside a Kubernetes cluster to multiplex requests for in-cluster Varnish containers.
 You can use [sample deployment file](deployment/sample.yaml) to deploy your Kubernetes cluster.
 
@@ -18,7 +17,7 @@ You can use [sample deployment file](deployment/sample.yaml) to deploy your Kube
 $ kubectl create -f config/sample.yaml
 ```
 
-#### Binary
+### Binary
 Binary can be downloaded from [Releases](https://github.com/bilalcaliskan/nginx-conf-generator/releases) page. You can
 use binary method to manage standalone Varnish instances, not in Kubernetes.
 
@@ -27,7 +26,7 @@ After then, you can simply run binary by providing required command line argumen
 $ ./varnish-cache-invalidator --inCluster false targetHosts 10.0.0.100:6081,10.0.0.101:6081,10.0.0.102:6081
 ```
 
-### Customization
+## Configuration
 Varnish-cache-invalidator can be customized with several command line arguments. You can pass command line arguments via
 [sample deployment file](deployment/sample.yaml). Here is the list of arguments you can pass:
 
@@ -51,12 +50,12 @@ Varnish-cache-invalidator can be customized with several command line arguments.
 --readTimeoutSeconds    ReadTimeoutSeconds is the read timeout of the both web server and metrics server, defaults to 10
 ```
 
-### Development
+## Development
 This project requires below tools while developing:
 - [pre-commit](https://pre-commit.com/)
 - [golangci-lint](https://golangci-lint.run/usage/install/) - required by [pre-commit](https://pre-commit.com/)
 
-#### How varnish-cache-invalidator handles authentication with kube-apiserver?
+## How varnish-cache-invalidator handles authentication with kube-apiserver?
 
 varnish-cache-invalidator uses [client-go](https://github.com/kubernetes/client-go) to interact
 with `kube-apiserver`. [client-go](https://github.com/kubernetes/client-go) uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
