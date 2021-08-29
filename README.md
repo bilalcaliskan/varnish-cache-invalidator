@@ -23,7 +23,7 @@ use binary method to manage standalone Varnish instances, not in Kubernetes.
 
 After then, you can simply run binary by providing required command line arguments:
 ```shell
-$ ./varnish-cache-invalidator --inCluster false targetHosts 10.0.0.100:6081,10.0.0.101:6081,10.0.0.102:6081
+$ ./varnish-cache-invalidator --inCluster false --targetHosts 10.0.0.100:6081,10.0.0.101:6081,10.0.0.102:6081
 ```
 
 ## Configuration
