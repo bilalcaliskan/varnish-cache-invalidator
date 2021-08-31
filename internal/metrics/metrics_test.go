@@ -18,12 +18,12 @@ func TestRunMetricsServer(t *testing.T) {
 		router := mux.NewRouter()
 		metricServer := &http.Server{
 			Handler:      router,
-			Addr:         fmt.Sprintf(":%d", vcio.MetricsPort),
-			WriteTimeout: time.Duration(int32(vcio.WriteTimeoutSeconds)) * time.Second,
-			ReadTimeout:  time.Duration(int32(vcio.ReadTimeoutSeconds)) * time.Second,
+			Addr:         fmt.Sprintf(":%d", opts.MetricsPort),
+			WriteTimeout: time.Duration(int32(opts.WriteTimeoutSeconds)) * time.Second,
+			ReadTimeout:  time.Duration(int32(opts.ReadTimeoutSeconds)) * time.Second,
 		}
 		router.Handle("/metrics", promhttp.Handler())
-		logger.Info("metric server is up and running", zap.Int("port", vcio.MetricsPort))
+		logger.Info("metric server is up and running", zap.Int("port", opts.MetricsPort))
 		errChan <- metricServer.ListenAndServe()
 	}()
 

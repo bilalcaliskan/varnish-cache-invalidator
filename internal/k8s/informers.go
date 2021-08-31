@@ -21,19 +21,19 @@ var (
 	clientSet  *kubernetes.Clientset
 	err        error
 	logger     *zap.Logger
-	vcio       *options.VarnishCacheInvalidatorOptions
+	opts       *options.VarnishCacheInvalidatorOptions
 	// VarnishInstances keeps pointer of varnish instances' ip:port information
 	VarnishInstances []*string
 )
 
 func init() {
 	logger = logging.GetLogger()
-	vcio = options.GetVarnishCacheInvalidatorOptions()
+	opts = options.GetVarnishCacheInvalidatorOptions()
 
-	logger.Info("initializing kube client", zap.String("masterUrl", vcio.MasterUrl),
-		zap.String("kubeConfigPath", vcio.KubeConfigPath), zap.Bool("inCluster", vcio.InCluster))
+	logger.Info("initializing kube client", zap.String("masterUrl", opts.MasterUrl),
+		zap.String("kubeConfigPath", opts.KubeConfigPath), zap.Bool("inCluster", opts.InCluster))
 
-	restConfig, err = getConfig(vcio.MasterUrl, vcio.KubeConfigPath, vcio.InCluster)
+	restConfig, err = getConfig(opts.MasterUrl, opts.KubeConfigPath, opts.InCluster)
 	if err != nil {
 		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
 	}
@@ -47,8 +47,8 @@ func init() {
 // RunPodInformer continuously watches kube-apiserver with shared informer for Pod resources, then does necessary updates
 // on VarnishInstances slice on Add/Update/Delete conditions
 func RunPodInformer() {
-	varnishLabelKey := strings.Split(vcio.VarnishLabel, "=")[0]
-	varnishLabelValue := strings.Split(vcio.VarnishLabel, "=")[1]
+	varnishLabelKey := strings.Split(opts.VarnishLabel, "=")[0]
+	varnishLabelValue := strings.Split(opts.VarnishLabel, "=")[1]
 
 	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second*30)
 	podInformer := informerFactory.Core().V1().Pods()
@@ -57,7 +57,7 @@ func RunPodInformer() {
 			pod := obj.(*v1.Pod)
 			labels := pod.GetLabels()
 			for key, value := range labels {
-				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == vcio.VarnishNamespace {
+				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == opts.VarnishNamespace {
 					if pod.Status.PodIP != "" {
 						podUrl := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
 						logger.Info("Adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
@@ -78,7 +78,7 @@ func RunPodInformer() {
 
 			for key, value := range labels {
 				if key == varnishLabelKey && value == varnishLabelValue && oldPod.ResourceVersion != newPod.ResourceVersion &&
-					oldPod.Namespace == vcio.VarnishNamespace {
+					oldPod.Namespace == opts.VarnishNamespace {
 					if oldPod.Status.PodIP == "" && newPod.Status.PodIP != "" {
 						logger.Info("Assigned an ip address to the pod, adding to varnishPods slice", zap.String("pod", newPod.Name),
 							zap.String("namespace", newPod.Namespace), zap.String("ipAddress", newPod.Status.PodIP))
@@ -93,7 +93,7 @@ func RunPodInformer() {
 			pod := obj.(*v1.Pod)
 			labels := pod.GetLabels()
 			for key, value := range labels {
-				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == vcio.VarnishNamespace {
+				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == opts.VarnishNamespace {
 					logger.Info("Varnish pod is deleted, removing from varnishPods slice", zap.String("pod", pod.Name),
 						zap.String("namespace", pod.Namespace))
 					podUrl := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)

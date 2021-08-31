@@ -18,12 +18,12 @@ import (
 var (
 	router *mux.Router
 	logger *zap.Logger
-	vcio   *options.VarnishCacheInvalidatorOptions
+	opts   *options.VarnishCacheInvalidatorOptions
 )
 
 func init() {
 	logger = logging.GetLogger()
-	vcio = options.GetVarnishCacheInvalidatorOptions()
+	opts = options.GetVarnishCacheInvalidatorOptions()
 	router = mux.NewRouter()
 	bannerBytes, _ := ioutil.ReadFile("banner.txt")
 	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
@@ -37,12 +37,11 @@ func main() {
 		}
 	}()
 
-	// below check ensures that we will use our Varnish instances as Kubernetes pods
-	if vcio.TargetHosts == "" {
+	// below check ensures that if our Varnish instances inside kubernetes or not
+	if opts.InCluster {
 		go k8s.RunPodInformer()
 	} else {
-		// TODO: Check the case that Varnish instances are not running inside Kubernetes. Check them after standalone installation
-		splitted := strings.Split(vcio.TargetHosts, ",")
+		splitted := strings.Split(opts.TargetHosts, ",")
 		for _, v := range splitted {
 			k8s.VarnishInstances = append(k8s.VarnishInstances, &v)
 		}

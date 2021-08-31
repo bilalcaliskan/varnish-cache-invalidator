@@ -6,6 +6,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+// addVarnishPod add a pod string to varnishPods *[]*string
 func addVarnishPod(varnishPods *[]*string, pod *string) {
 	_, found := findVarnishPod(*varnishPods, *pod)
 	if !found {
@@ -13,6 +14,7 @@ func addVarnishPod(varnishPods *[]*string, pod *string) {
 	}
 }
 
+// findVarnishPod finds the specific pod string in varnishPods []*string
 func findVarnishPod(varnishPods []*string, pod string) (int, bool) {
 	for i, item := range varnishPods {
 		if pod == *item {
@@ -22,6 +24,7 @@ func findVarnishPod(varnishPods []*string, pod string) (int, bool) {
 	return -1, false
 }
 
+// removeVarnishPod removes the Varnish pod string from varnishPods *[]*string
 func removeVarnishPod(varnishPods *[]*string, index int) {
 	*varnishPods = append((*varnishPods)[:index], (*varnishPods)[index+1:]...)
 }

@@ -64,7 +64,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 	for _, v := range k8s.VarnishInstances {
 		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
-		req.Host = vcio.PurgeDomain
+		req.Host = opts.PurgeDomain
 
 		logger.Info("Making PURGE request", zap.String("requestMethod", "PURGE"), zap.String("targetHost", *v))
 		res, err := client.Do(req)
