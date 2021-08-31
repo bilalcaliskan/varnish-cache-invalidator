@@ -3,7 +3,6 @@ package k8s
 import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 // addVarnishPod add a pod string to varnishPods *[]*string
@@ -30,17 +29,11 @@ func removeVarnishPod(varnishPods *[]*string, index int) {
 }
 
 // getConfig initializes and returns the *rest.Config
-func getConfig(masterUrl, kubeConfigPath string, inCluster bool) (*rest.Config, error) {
+func getConfig() (*rest.Config, error) {
 	var config *rest.Config
 	var err error
 
-	if inCluster {
-		config, err = rest.InClusterConfig()
-	} else {
-		config, err = clientcmd.BuildConfigFromFlags(masterUrl, kubeConfigPath)
-	}
-
-	if err != nil {
+	if config, err = rest.InClusterConfig(); err != nil {
 		return nil, err
 	}
 

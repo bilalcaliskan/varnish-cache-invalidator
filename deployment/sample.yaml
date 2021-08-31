@@ -48,7 +48,7 @@ spec:
           args: [
             "--varnishNamespace", "default",
             "--varnishLabel", "'app=varnish'",
-            "--inCluster", "true"
+            "--inCluster=true"
           ]
           image: 'docker.io/bilalcaliskan/varnish-cache-invalidator:latest'
           imagePullPolicy: Always

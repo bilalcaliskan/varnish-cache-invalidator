@@ -23,7 +23,7 @@ use binary method to manage standalone Varnish instances, not in Kubernetes.
 
 After then, you can simply run binary by providing required command line arguments:
 ```shell
-$ ./varnish-cache-invalidator --inCluster false --targetHosts 10.0.0.100:6081,10.0.0.101:6081,10.0.0.102:6081
+$ ./varnish-cache-invalidator --inCluster=false --targetHosts 10.0.0.100:6081,10.0.0.101:6081,10.0.0.102:6081
 ```
 
 ## Configuration
@@ -31,14 +31,10 @@ Varnish-cache-invalidator can be customized with several command line arguments.
 [sample deployment file](deployment/sample.yaml). Here is the list of arguments you can pass:
 
 ```
---masterUrl             Additional url to kube-apiserver. There is no need to specify anything here
-                        since we are using serviceAccount to access kube-apiserver. Defaults to "".
---kubeconfigPath        KubeConfigPath is the path of the kubeconfig file to access the cluster.
-                        Defaults to ~/.kube/config
---varnishNamespace      VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace
---varnishLabel          VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish
 --inCluster             InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not,
                         defaults to true
+--varnishNamespace      VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace
+--varnishLabel          VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish
 --targetHosts           TargetHosts used when our Varnish instances(comma seperated) are not running in Kubernetes as
                         a pod, required for standalone Varnish instances, defaults to ''
 

@@ -30,16 +30,13 @@ func init() {
 	logger = logging.GetLogger()
 	opts = options.GetVarnishCacheInvalidatorOptions()
 
-	logger.Info("initializing kube client", zap.String("masterUrl", opts.MasterUrl),
-		zap.String("kubeConfigPath", opts.KubeConfigPath), zap.Bool("inCluster", opts.InCluster))
+	logger.Info("initializing kube client")
 
-	restConfig, err = getConfig(opts.MasterUrl, opts.KubeConfigPath, opts.InCluster)
-	if err != nil {
+	if restConfig, err = getConfig(); err != nil {
 		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
 	}
 
-	clientSet, err = getClientSet(restConfig)
-	if err != nil {
+	if clientSet, err = getClientSet(restConfig); err != nil {
 		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
 	}
 }
