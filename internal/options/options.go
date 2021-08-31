@@ -6,6 +6,9 @@ import (
 
 var vcio = &VarnishCacheInvalidatorOptions{}
 
+// VarnishInstances keeps pointer of varnish instances' ip:port information
+var VarnishInstances []*string
+
 func init() {
 	vcio.addFlags(pflag.CommandLine)
 	pflag.Parse()
@@ -47,9 +50,9 @@ func (vcio *VarnishCacheInvalidatorOptions) addFlags(fs *pflag.FlagSet) {
 		"VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish")
 	fs.BoolVar(&vcio.InCluster, "inCluster", true,
 		"InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not, defaults to true")
-	fs.StringVar(&vcio.TargetHosts, "targetHosts", "",
-		"TargetHosts used when our Varnish instances are not running in Kubernetes as a pod, required for standalone "+
-			"Varnish instances, defaults to 'http://127.0.0.1:6081'")
+	fs.StringVar(&vcio.TargetHosts, "targetHosts", "http://127.0.0.1:6081",
+		"TargetHosts is comma seperated list of target hosts, used when our Varnish instances are not running "+
+			"in Kubernetes as a pod, required for standalone Varnish instances, defaults to 'http://127.0.0.1:6081'")
 	fs.StringVar(&vcio.PurgeDomain, "purgeDomain", "foo.example.com", "PurgeDomain will set Host header "+
 		"on purge requests. It must be changed to work properly on different environments.")
 	fs.IntVar(&vcio.ServerPort, "serverPort", 3000, "ServerPort is the web server port of the "+

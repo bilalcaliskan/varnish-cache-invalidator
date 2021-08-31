@@ -22,14 +22,15 @@ var (
 	err        error
 	logger     *zap.Logger
 	opts       *options.VarnishCacheInvalidatorOptions
-	// VarnishInstances keeps pointer of varnish instances' ip:port information
-	VarnishInstances []*string
 )
 
 func init() {
 	logger = logging.GetLogger()
 	opts = options.GetVarnishCacheInvalidatorOptions()
+}
 
+// InitK8sTypes initializes the required k8s types rest.Config and kubernetes.ClientSet
+func InitK8sTypes() {
 	logger.Info("initializing kube client")
 
 	if restConfig, err = getConfig(); err != nil {
@@ -58,7 +59,7 @@ func RunPodInformer() {
 					if pod.Status.PodIP != "" {
 						podUrl := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
 						logger.Info("Adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
-						addVarnishPod(&VarnishInstances, &podUrl)
+						addVarnishPod(&options.VarnishInstances, &podUrl)
 					} else {
 						logger.Warn("Varnish pod does not have an ip address yet, skipping add operation",
 							zap.String("pod", pod.Name), zap.String("namespace", pod.Namespace))
@@ -81,7 +82,7 @@ func RunPodInformer() {
 							zap.String("namespace", newPod.Namespace), zap.String("ipAddress", newPod.Status.PodIP))
 						podUrl := fmt.Sprintf("http://%s:%d", newPod.Status.PodIP, newPod.Spec.Containers[0].Ports[0].ContainerPort)
 						logger.Info("Adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
-						addVarnishPod(&VarnishInstances, &podUrl)
+						addVarnishPod(&options.VarnishInstances, &podUrl)
 					}
 				}
 			}
@@ -94,9 +95,9 @@ func RunPodInformer() {
 					logger.Info("Varnish pod is deleted, removing from varnishPods slice", zap.String("pod", pod.Name),
 						zap.String("namespace", pod.Namespace))
 					podUrl := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
-					index, found := findVarnishPod(VarnishInstances, podUrl)
+					index, found := findVarnishPod(options.VarnishInstances, podUrl)
 					if found {
-						removeVarnishPod(&VarnishInstances, index)
+						removeVarnishPod(&options.VarnishInstances, index)
 					}
 				}
 			}

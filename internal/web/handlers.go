@@ -3,7 +3,7 @@ package web
 import (
 	"fmt"
 	"net/http"
-	"varnish-cache-invalidator/internal/k8s"
+	"varnish-cache-invalidator/internal/options"
 
 	"go.uber.org/zap"
 )
@@ -19,7 +19,7 @@ func banHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, v := range k8s.VarnishInstances {
+	for _, v := range options.VarnishInstances {
 		req, _ := http.NewRequest("BAN", *v, nil)
 		req.Header.Set("ban-url", banRegex)
 		logger.Info("Making BAN request", zap.String("requestMethod", "BAN"), zap.String("targetHost", *v))
@@ -35,15 +35,15 @@ func banHandler(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	if successCount == len(k8s.VarnishInstances) {
+	if successCount == len(options.VarnishInstances) {
 		logger.Info("All BAN requests succeeded on Varnish pods!", zap.String("requestMethod", "BAN"),
 			zap.Int("successCount", successCount))
 		w.WriteHeader(http.StatusOK)
 	} else {
 		logger.Warn("One or more Varnish BAN requests failed", zap.String("requestMethod", "BAN"),
-			zap.Int("successCount", successCount), zap.Int("failureCount", len(k8s.VarnishInstances)-successCount))
+			zap.Int("successCount", successCount), zap.Int("failureCount", len(options.VarnishInstances)-successCount))
 		response = fmt.Sprintf("One or more Varnish BAN requests failed, check the logs!\nSucceeded request = %d\n"+
-			"Failed request = %d", successCount, len(k8s.VarnishInstances)-successCount)
+			"Failed request = %d", successCount, len(options.VarnishInstances)-successCount)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
@@ -61,7 +61,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, v := range k8s.VarnishInstances {
+	for _, v := range options.VarnishInstances {
 		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
 		req.Host = opts.PurgeDomain
@@ -78,15 +78,15 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if successCount == len(k8s.VarnishInstances) {
+	if successCount == len(options.VarnishInstances) {
 		logger.Info("All PURGE requests succeeded on Varnish pods!", zap.String("requestMethod", "PURGE"),
 			zap.Int("successCount", successCount))
 		w.WriteHeader(http.StatusOK)
 	} else {
 		logger.Warn("One or more Varnish PURGE requests failed", zap.String("requestMethod", "PURGE"),
-			zap.Int("successCount", successCount), zap.Int("failureCount", len(k8s.VarnishInstances)-successCount))
+			zap.Int("successCount", successCount), zap.Int("failureCount", len(options.VarnishInstances)-successCount))
 		response = fmt.Sprintf("One or more Varnish PURGE requests failed, check the logs!\nSucceeded request = %d\n"+
-			"Failed request = %d", successCount, len(k8s.VarnishInstances)-successCount)
+			"Failed request = %d", successCount, len(options.VarnishInstances)-successCount)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 

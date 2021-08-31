@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 	"varnish-cache-invalidator/internal/k8s"
@@ -39,11 +40,15 @@ func main() {
 
 	// below check ensures that if our Varnish instances inside kubernetes or not
 	if opts.InCluster {
+		logger.Info("will use kubernetes pod instances, running pod informer to fetch pods")
+		k8s.InitK8sTypes()
 		go k8s.RunPodInformer()
 	} else {
+		log.Println(opts.TargetHosts)
 		splitted := strings.Split(opts.TargetHosts, ",")
+		logger.Info("will use standalone varnish instances", zap.Any("instances", splitted))
 		for _, v := range splitted {
-			k8s.VarnishInstances = append(k8s.VarnishInstances, &v)
+			options.VarnishInstances = append(options.VarnishInstances, &v)
 		}
 	}
 
