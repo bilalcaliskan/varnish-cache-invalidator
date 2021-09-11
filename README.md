@@ -4,9 +4,29 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/varnish-cache-invalidator)](https://goreportcard.com/report/github.com/bilalcaliskan/varnish-cache-invalidator)
 [![codecov](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator)
 
-This tool discovers kube-apiserver for running [Varnish](https://github.com/varnishcache/varnish-cache) pods inside
-Kubernetes and multiplexes **BAN** and **PURGE** requests on them at the same time to manage the cache properly. If you are
-using Varnish Enterprise, you already have that feature.
+This tool basically multiplexes **BAN** and **PURGE** requests on [Varnish Cache](https://github.com/varnishcache/varnish-cache)
+instances at the same time to manage the cache properly. If you are using Varnish Enterprise, you already have that feature.
+
+varnish-cache-invalidator can be used for standalone Varnish instances or Varnish pods inside a Kubernetes cluster.
+
+**Standalone mode**
+In that mode, varnish-cache-invalidator multiplexes requests on static standalone Varnish instances which are provided
+with **--targetHosts** flag. This flag gets comma seperated list of hosts.
+
+Please check all the command line arguments on **Configuration** section. Required args for standalone mode:
+```
+--inCluster=false
+--targetHosts
+```
+
+**Kubernetes mode**
+In that mode, varnish-cache-invalidator discovers kube-apiserver for running [Varnish](https://github.com/varnishcache/varnish-cache) pods inside
+Kubernetes and multiplexes **BAN** and **PURGE** requests on them at the same time to manage the cache properly.
+
+Please check all the command line arguments on **Configuration** section. Required args for Kubernetes mode:
+```
+--inCluster=true
+```
 
 ## Installation
 ### Kubernetes
@@ -48,10 +68,11 @@ Varnish-cache-invalidator can be customized with several command line arguments.
 
 ## Development
 This project requires below tools while developing:
+- [Golang 1.16](https://golang.org/doc/go1.16)
 - [pre-commit](https://pre-commit.com/)
 - [golangci-lint](https://golangci-lint.run/usage/install/) - required by [pre-commit](https://pre-commit.com/)
 
-## How varnish-cache-invalidator handles authentication with kube-apiserver?
+## How varnish-cache-invalidator handles authentication with kube-apiserver in Kubernetes mode?
 
 varnish-cache-invalidator uses [client-go](https://github.com/kubernetes/client-go) to interact
 with `kube-apiserver`. [client-go](https://github.com/kubernetes/client-go) uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
