@@ -23,7 +23,7 @@ func TestRunMetricsServer(t *testing.T) {
 			ReadTimeout:  time.Duration(int32(opts.ReadTimeoutSeconds)) * time.Second,
 		}
 		router.Handle("/metrics", promhttp.Handler())
-		logger.Info("metric server is up and running", zap.Int("port", opts.MetricsPort))
+		logger.Info("starting metrics server", zap.Int("port", opts.MetricsPort))
 		errChan <- metricServer.ListenAndServe()
 	}()
 
@@ -31,7 +31,7 @@ func TestRunMetricsServer(t *testing.T) {
 		select {
 		case c := <-errChan:
 			t.Error(c)
-		case <-time.After(15 * time.Second):
+		case <-time.After(10 * time.Second):
 			t.Log("success")
 			return
 		}

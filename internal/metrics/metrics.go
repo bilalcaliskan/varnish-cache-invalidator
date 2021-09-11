@@ -42,6 +42,6 @@ func RunMetricsServer(router *mux.Router) {
 		ReadTimeout:  time.Duration(int32(opts.ReadTimeoutSeconds)) * time.Second,
 	}
 	router.Handle("/metrics", promhttp.Handler())
-	logger.Info("metric server is up and running", zap.Int("port", opts.MetricsPort))
+	logger.Info("starting metrics server", zap.Int("port", opts.MetricsPort))
 	panic(metricServer.ListenAndServe())
 }

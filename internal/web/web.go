@@ -36,6 +36,6 @@ func RunWebServer(router *mux.Router) {
 		time.Duration(int32(opts.WriteTimeoutSeconds))*time.Second,
 		time.Duration(int32(opts.ReadTimeoutSeconds))*time.Second, logger)
 
-	logger.Info("web server is up and running", zap.Int("port", opts.ServerPort))
+	logger.Info("starting web server", zap.Int("port", opts.ServerPort))
 	panic(webServer.ListenAndServe())
 }
