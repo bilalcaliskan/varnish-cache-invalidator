@@ -72,6 +72,9 @@ This project requires below tools while developing:
 - [pre-commit](https://pre-commit.com/)
 - [golangci-lint](https://golangci-lint.run/usage/install/) - required by [pre-commit](https://pre-commit.com/)
 
+## License
+Apache License 2.0
+
 ## How varnish-cache-invalidator handles authentication with kube-apiserver in Kubernetes mode?
 
 varnish-cache-invalidator uses [client-go](https://github.com/kubernetes/client-go) to interact
