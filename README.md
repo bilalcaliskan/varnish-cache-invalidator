@@ -3,6 +3,9 @@
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/varnish-cache-invalidator)](https://hub.docker.com/r/bilalcaliskan/varnish-cache-invalidator/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/varnish-cache-invalidator)](https://goreportcard.com/report/github.com/bilalcaliskan/varnish-cache-invalidator)
 [![codecov](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator)
+[![Release](https://img.shields.io/github/release/bilalcaliskan/varnish-cache-invalidator.svg)](https://github.com/bilalcaliskan/varnish-cache-invalidator/releases/latest)
+[![Go version](https://img.shields.io/github/go-mod/go-version/bilalcaliskan/varnish-cache-invalidator)](https://github.com/bilalcaliskan/varnish-cache-invalidator)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This tool basically multiplexes **BAN** and **PURGE** requests on [Varnish Cache](https://github.com/varnishcache/varnish-cache)
 instances at the same time to manage the cache properly. If you are using Varnish Enterprise, you already have that feature.
