@@ -31,8 +31,6 @@ type VarnishCacheInvalidatorOptions struct {
 	// use comma separated list of instances. ex: TARGET_HOSTS=http://172.17.0.7:6081,http://172.17.0.8:6081
 	// mostly this is required while running outside of the cluster for debugging purposes
 	TargetHosts string
-	// PurgeDomain will set Host header on purge requests. It must be changed to work properly on different environments.
-	PurgeDomain string
 	// ServerPort is the web server port of the varnish-cache-invalidator, defaults to 3000
 	ServerPort int
 	// WriteTimeoutSeconds is the write timeout of the both web server and metrics server, defaults to 10
@@ -53,8 +51,6 @@ func (vcio *VarnishCacheInvalidatorOptions) addFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&vcio.TargetHosts, "targetHosts", "http://127.0.0.1:6081",
 		"TargetHosts is comma seperated list of target hosts, used when our Varnish instances are not running "+
 			"in Kubernetes as a pod, required for standalone Varnish instances, defaults to 'http://127.0.0.1:6081'")
-	fs.StringVar(&vcio.PurgeDomain, "purgeDomain", "foo.example.com", "PurgeDomain will set Host header "+
-		"on purge requests. It must be changed to work properly on different environments.")
 	fs.IntVar(&vcio.ServerPort, "serverPort", 3000, "ServerPort is the web server port of the "+
 		"varnish-cache-invalidator, defaults to 3000")
 	fs.IntVar(&vcio.WriteTimeoutSeconds, "writeTimeoutSeconds", 10, "WriteTimeoutSeconds is the write "+

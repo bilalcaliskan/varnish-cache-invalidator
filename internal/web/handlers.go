@@ -61,10 +61,18 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	purgeDomain := r.Header.Get("purge-domain")
+	if purgeDomain == "" {
+		logger.Error("Unable to make a PURGE request to Varnish targets, header purge-domain must be set!",
+			zap.String("requestMethod", "PURGE"))
+		http.Error(w, "Header purge-domain must be set!", http.StatusBadRequest)
+		return
+	}
+
 	for _, v := range options.VarnishInstances {
 		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
-		req.Host = opts.PurgeDomain
+		req.Host = purgeDomain
 
 		logger.Info("Making PURGE request", zap.String("requestMethod", "PURGE"), zap.String("targetHost", *v))
 		res, err := client.Do(req)

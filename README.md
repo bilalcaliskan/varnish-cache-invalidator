@@ -57,14 +57,14 @@ Varnish-cache-invalidator can be customized with several command line arguments.
 --varnishLabel          VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish
 --targetHosts           TargetHosts used when our Varnish instances(comma seperated) are not running in Kubernetes as
                         a pod, required for standalone Varnish instances, defaults to ''
-
---purgeDomain           PurgeDomain will set Host header on purge requests. It must be changed to work properly on
-                        different environments.
 --serverPort            ServerPort is the web server port of the varnish-cache-invalidator, defaults to 3000
 --metricsPort           MetricsPort is the port of the metrics server, defaults to 3001
 --writeTimeoutSeconds   WriteTimeoutSeconds is the write timeout of the both web server and metrics server, defaults to 10
 --readTimeoutSeconds    ReadTimeoutSeconds is the read timeout of the both web server and metrics server, defaults to 10
 ```
+
+## Examples
+**TBD**
 
 ## Development
 This project requires below tools while developing:
