@@ -40,9 +40,9 @@ You can use [sample deployment file](deployment/sample.yaml) to deploy your Kube
 $ kubectl create -f config/sample.yaml
 ```
 
-### Binary
-Binary can be downloaded from [Releases](https://github.com/bilalcaliskan/nginx-conf-generator/releases) page. You can
-use binary method to manage standalone Varnish instances, not in Kubernetes.
+### Standalone
+You can use binary method to manage standalone Varnish instances, not in Kubernetes. Binary can
+be downloaded from [Releases](https://github.com/bilalcaliskan/nginx-conf-generator/releases) page.
 
 After then, you can simply run binary by providing required command line arguments:
 ```shell
