@@ -25,8 +25,18 @@ var (
 )
 
 func init() {
-	logger = logging.GetLogger()
 	opts = options.GetVarnishCacheInvalidatorOptions()
+	logger = logging.GetLogger()
+	logger.Info("initializing kube client")
+	if restConfig, err = getConfig(); err != nil {
+		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
+	}
+	if clientSet, err = getClientSet(restConfig); err != nil {
+		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
+	}
+
+	logger = logger.With(zap.Bool("inCluster", opts.InCluster), zap.String("masterIp", restConfig.Host),
+		zap.String("varnishLabel", opts.VarnishLabel), zap.String("varnishNamespace", opts.VarnishNamespace))
 }
 
 // InitK8sTypes initializes the required k8s types rest.Config and kubernetes.ClientSet
