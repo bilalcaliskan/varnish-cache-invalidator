@@ -54,16 +54,16 @@ Varnish-cache-invalidator can be customized with several command line arguments.
 [sample deployment file](deployment/sample.yaml). Here is the list of arguments you can pass:
 
 ```
---inCluster             InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not,
-                        defaults to true
---varnishNamespace      VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace
---varnishLabel          VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish
---targetHosts           TargetHosts used when our Varnish instances(comma seperated) are not running in Kubernetes as
-                        a pod, required for standalone Varnish instances, defaults to ''
---serverPort            ServerPort is the web server port of the varnish-cache-invalidator, defaults to 3000
---metricsPort           MetricsPort is the port of the metrics server, defaults to 3001
---writeTimeoutSeconds   WriteTimeoutSeconds is the write timeout of the both web server and metrics server, defaults to 10
---readTimeoutSeconds    ReadTimeoutSeconds is the read timeout of the both web server and metrics server, defaults to 10
+--inCluster                 bool        InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not,
+                                        defaults to true
+--varnishNamespace          string      VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace
+--varnishLabel              string      VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish
+--targetHosts               string      TargetHosts used when our Varnish instances(comma seperated) are not running in Kubernetes as
+                                        a pod, required for standalone Varnish instances, defaults to ''
+--serverPort                int         ServerPort is the web server port of the varnish-cache-invalidator, defaults to 3000
+--metricsPort               int         MetricsPort is the port of the metrics server, defaults to 3001
+--writeTimeoutSeconds       int         WriteTimeoutSeconds is the write timeout of the both web server and metrics server, defaults to 10
+--readTimeoutSeconds        int         ReadTimeoutSeconds is the read timeout of the both web server and metrics server, defaults to 10
 ```
 
 ## Examples
