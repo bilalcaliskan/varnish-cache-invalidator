@@ -2,6 +2,7 @@
 [![CI](https://github.com/bilalcaliskan/varnish-cache-invalidator/workflows/CI/badge.svg?event=push)](https://github.com/bilalcaliskan/varnish-cache-invalidator/actions?query=workflow%3ACI)
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/varnish-cache-invalidator)](https://hub.docker.com/r/bilalcaliskan/varnish-cache-invalidator/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/varnish-cache-invalidator)](https://goreportcard.com/report/github.com/bilalcaliskan/varnish-cache-invalidator)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_varnish-cache-invalidator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_varnish-cache-invalidator)
 [![codecov](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator)
 [![Release](https://img.shields.io/github/release/bilalcaliskan/varnish-cache-invalidator.svg)](https://github.com/bilalcaliskan/varnish-cache-invalidator/releases/latest)
 [![Go version](https://img.shields.io/github/go-mod/go-version/bilalcaliskan/varnish-cache-invalidator)](https://github.com/bilalcaliskan/varnish-cache-invalidator)
