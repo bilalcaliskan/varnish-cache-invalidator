@@ -22,10 +22,6 @@ func init() {
 	opts = options.GetVarnishCacheInvalidatorOptions()
 }
 
-// TODO: Generate custom metrics, check below:
-// https://prometheus.io/docs/guides/go-application/
-// https://www.robustperception.io/prometheus-middleware-for-gorilla-mux
-
 // RunMetricsServer provides an endpoint, exports prometheus metrics using prometheus client golang
 func RunMetricsServer(router *mux.Router) {
 	defer func() {
@@ -41,6 +37,7 @@ func RunMetricsServer(router *mux.Router) {
 		WriteTimeout: time.Duration(int32(opts.WriteTimeoutSeconds)) * time.Second,
 		ReadTimeout:  time.Duration(int32(opts.ReadTimeoutSeconds)) * time.Second,
 	}
+
 	router.Handle("/metrics", promhttp.Handler())
 	logger.Info("starting metrics server", zap.Int("port", opts.MetricsPort))
 	panic(metricServer.ListenAndServe())
