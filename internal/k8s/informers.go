@@ -16,6 +16,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
+const PodUrl = "http://%s:%d"
+
 var (
 	restConfig *rest.Config
 	clientSet  *kubernetes.Clientset
@@ -67,7 +69,7 @@ func RunPodInformer() {
 			for key, value := range labels {
 				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == opts.VarnishNamespace {
 					if pod.Status.PodIP != "" {
-						podUrl := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
+						podUrl := fmt.Sprintf(PodUrl, pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
 						logger.Info("Adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
 						addVarnishPod(&options.VarnishInstances, &podUrl)
 					} else {
@@ -82,15 +84,13 @@ func RunPodInformer() {
 			newPod := newObj.(*v1.Pod)
 			labels := oldPod.GetLabels()
 
-			// TODO: Handle all the cases
-
 			for key, value := range labels {
 				if key == varnishLabelKey && value == varnishLabelValue && oldPod.ResourceVersion != newPod.ResourceVersion &&
 					oldPod.Namespace == opts.VarnishNamespace {
 					if oldPod.Status.PodIP == "" && newPod.Status.PodIP != "" {
 						logger.Info("Assigned an ip address to the pod, adding to varnishPods slice", zap.String("pod", newPod.Name),
 							zap.String("namespace", newPod.Namespace), zap.String("ipAddress", newPod.Status.PodIP))
-						podUrl := fmt.Sprintf("http://%s:%d", newPod.Status.PodIP, newPod.Spec.Containers[0].Ports[0].ContainerPort)
+						podUrl := fmt.Sprintf(PodUrl, newPod.Status.PodIP, newPod.Spec.Containers[0].Ports[0].ContainerPort)
 						logger.Info("Adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
 						addVarnishPod(&options.VarnishInstances, &podUrl)
 					}
@@ -104,7 +104,7 @@ func RunPodInformer() {
 				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == opts.VarnishNamespace {
 					logger.Info("Varnish pod is deleted, removing from varnishPods slice", zap.String("pod", pod.Name),
 						zap.String("namespace", pod.Namespace))
-					podUrl := fmt.Sprintf("http://%s:%d", pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
+					podUrl := fmt.Sprintf(PodUrl, pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
 					index, found := findVarnishPod(options.VarnishInstances, podUrl)
 					if found {
 						removeVarnishPod(&options.VarnishInstances, index)
