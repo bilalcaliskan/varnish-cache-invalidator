@@ -23,7 +23,7 @@ func init() {
 }
 
 // RunMetricsServer provides an endpoint, exports prometheus metrics using prometheus client golang
-func RunMetricsServer(router *mux.Router) {
+func RunMetricsServer() error {
 	defer func() {
 		err := logger.Sync()
 		if err != nil {
@@ -31,6 +31,7 @@ func RunMetricsServer(router *mux.Router) {
 		}
 	}()
 
+	router := mux.NewRouter()
 	metricServer := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf(":%d", opts.MetricsPort),
@@ -40,5 +41,5 @@ func RunMetricsServer(router *mux.Router) {
 
 	router.Handle("/metrics", promhttp.Handler())
 	logger.Info("starting metrics server", zap.Int("port", opts.MetricsPort))
-	panic(metricServer.ListenAndServe())
+	return metricServer.ListenAndServe()
 }
