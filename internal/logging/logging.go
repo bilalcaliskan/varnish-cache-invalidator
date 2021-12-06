@@ -11,7 +11,7 @@ var logger *zap.Logger
 func init() {
 	cfgConsole := zapcore.EncoderConfig{
 		MessageKey:   "message",
-		LevelKey:     "severity",
+		LevelKey:     "level",
 		EncodeLevel:  zapcore.LowercaseLevelEncoder,
 		TimeKey:      "time",
 		EncodeTime:   zapcore.RFC3339TimeEncoder,
@@ -21,7 +21,6 @@ func init() {
 
 	core := zapcore.NewTee(zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), zapcore.Lock(os.Stdout), zap.InfoLevel))
 	logger = zap.New(core)
-	logger.Info("An info level message")
 }
 
 // GetLogger returns the shared *zap.Logger

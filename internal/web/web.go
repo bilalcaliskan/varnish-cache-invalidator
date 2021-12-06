@@ -24,7 +24,7 @@ func init() {
 }
 
 // RunWebServer runs the web server which multiplexes client requests
-func RunWebServer(router *mux.Router) {
+func RunWebServer() error {
 	defer func() {
 		err := logger.Sync()
 		if err != nil {
@@ -32,10 +32,11 @@ func RunWebServer(router *mux.Router) {
 		}
 	}()
 
+	router := mux.NewRouter()
 	webServer := initServer(router, fmt.Sprintf(":%d", opts.ServerPort),
 		time.Duration(int32(opts.WriteTimeoutSeconds))*time.Second,
 		time.Duration(int32(opts.ReadTimeoutSeconds))*time.Second, logger)
 
 	logger.Info("starting web server", zap.Int("port", opts.ServerPort))
-	panic(webServer.ListenAndServe())
+	return webServer.ListenAndServe()
 }

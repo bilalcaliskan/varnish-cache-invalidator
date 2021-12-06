@@ -11,12 +11,10 @@ import (
 	"varnish-cache-invalidator/internal/web"
 
 	"github.com/dimiro1/banner"
-	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 )
 
 var (
-	router *mux.Router
 	logger *zap.Logger
 	opts   *options.VarnishCacheInvalidatorOptions
 )
@@ -24,7 +22,6 @@ var (
 func init() {
 	logger = logging.GetLogger()
 	opts = options.GetVarnishCacheInvalidatorOptions()
-	router = mux.NewRouter()
 	bannerBytes, _ := ioutil.ReadFile("banner.txt")
 	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
 }
@@ -49,6 +46,13 @@ func main() {
 		}
 	}
 
-	go metrics.RunMetricsServer(router)
-	web.RunWebServer(router)
+	go func() {
+		if err := metrics.RunMetricsServer(); err != nil {
+			logger.Fatal("fatal error occured while spinning metrics server", zap.Error(err))
+		}
+	}()
+
+	if err := web.RunWebServer(); err != nil {
+		logger.Fatal("fatal error occured while spinning web server", zap.Error(err))
+	}
 }
