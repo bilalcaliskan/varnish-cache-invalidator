@@ -8,7 +8,7 @@
 [![Go version](https://img.shields.io/github/go-mod/go-version/bilalcaliskan/varnish-cache-invalidator)](https://github.com/bilalcaliskan/varnish-cache-invalidator)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This tool basically multiplexes **BAN** and **PURGE** requests on [Varnish Cache](https://github.com/varnishcache/varnish-cache)
+This tool basically multiplexes **PURGE** requests on [Varnish Cache](https://github.com/varnishcache/varnish-cache)
 instances at the same time to manage the cache properly. If you are using Varnish Enterprise, you already have that feature.
 
 varnish-cache-invalidator can be used for standalone Varnish instances or Varnish pods inside a Kubernetes cluster.
@@ -25,7 +25,7 @@ Please check all the command line arguments on **Configuration** section. Requir
 
 **Kubernetes mode**
 In that mode, varnish-cache-invalidator discovers kube-apiserver for running [Varnish](https://github.com/varnishcache/varnish-cache) pods inside
-Kubernetes and multiplexes **BAN** and **PURGE** requests on them at the same time to manage the cache properly.
+Kubernetes and multiplexes **PURGE** requests on them at the same time to manage the cache properly.
 
 Please check all the command line arguments on **Configuration** section. Required args for Kubernetes mode:
 ```
@@ -34,11 +34,21 @@ Please check all the command line arguments on **Configuration** section. Requir
 
 ## Installation
 ### Kubernetes
-Varnish-cache-invalidator can be run inside a Kubernetes cluster to multiplex requests for in-cluster Varnish containers.
-You can use [sample deployment file](deployment/sample.yaml) to deploy your Kubernetes cluster.
+varnish-cache invalidator requires Kustomize for in-kubernetes installations. You can refer [here](https://kustomize.io/) for
+Kustomize installation.
 
+Varnish-cache-invalidator can be run inside a Kubernetes cluster to multiplex requests for in-cluster Varnish containers.
+You can use [deployment/invalidator](deployment/invalidator) folder to deploy it with sample configuration. For that, please
+run below command in the [deployment/invalidator](deployment/invalidator) directory:
 ```shell
-$ kubectl create -f config/sample.yaml
+$ kustomize build . | kubectl apply -f -
+```
+
+If you need to also deploy Varnish on Kubernetes, you can use [deployment/varnish](deployment/varnish) folder to deploy it
+with sample [default.vcl](deployment/varnish/default.vcl). For that, please run below command in the [deployment/varnish](deployment/varnish)
+directory:
+```shell
+$ kustomize build . | kubectl apply -f -
 ```
 
 ### Standalone
@@ -52,7 +62,7 @@ $ ./varnish-cache-invalidator --inCluster=false --targetHosts 10.0.0.100:6081,10
 
 ## Configuration
 Varnish-cache-invalidator can be customized with several command line arguments. You can pass command line arguments via
-[sample deployment file](deployment/sample.yaml). Here is the list of arguments you can pass:
+[sample deployment file](deployment/invalidator/sample.yaml). Here is the list of arguments you can pass:
 
 ```
 --inCluster                 bool        InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not,
@@ -85,7 +95,7 @@ varnish-cache-invalidator uses [client-go](https://github.com/kubernetes/client-
 with `kube-apiserver`. [client-go](https://github.com/kubernetes/client-go) uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
 mounted inside the Pod at the `/var/run/secrets/kubernetes.io/serviceaccount` path while initializing the client.
 
-If you have RBAC enabled on your cluster, when you applied the sample deployment file [deployment/sample.yaml](deployment/sample.yaml),
+If you have RBAC enabled on your cluster, when you applied the sample deployment file [deployment/sample.yaml](deployment/invalidator/sample.yaml),
 it will create required serviceaccount and clusterrolebinding and then use that serviceaccount to be used
 by our varnish-cache-invalidator pods.
 

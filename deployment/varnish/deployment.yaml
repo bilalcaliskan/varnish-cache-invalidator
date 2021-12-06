@@ -1,0 +1,38 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varnish-cache
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: varnish-cache
+  template:
+    metadata:
+      name: varnish-cache
+      labels:
+        app: varnish-cache
+    spec:
+      containers:
+        - name: varnish-cache
+          image: varnish:7.0.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VARNISH_SIZE
+              value: 128m
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /etc/varnish/default.vcl
+              name: varnish-config
+              subPath: default.vcl
+      volumes:
+        - name: varnish-config
+          configMap:
+            name: varnish-config
+            items:
+              - key: default.vcl
+                path: default.vcl
