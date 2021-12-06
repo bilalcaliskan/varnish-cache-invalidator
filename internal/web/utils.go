@@ -11,7 +11,6 @@ import (
 
 // registerHandlers registers the handlers of the web server
 func registerHandlers(router *mux.Router) {
-	router.HandleFunc("/ban", banHandler).Methods("BAN").Schemes("http").Name("ban")
 	router.HandleFunc("/purge", purgeHandler).Methods("PURGE").Schemes("http").Name("purge")
 }
 
