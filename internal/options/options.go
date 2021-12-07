@@ -21,6 +21,8 @@ func GetVarnishCacheInvalidatorOptions() *VarnishCacheInvalidatorOptions {
 
 // VarnishCacheInvalidatorOptions contains frequent command line and application options.
 type VarnishCacheInvalidatorOptions struct {
+	// IsLocal is only for local development
+	IsLocal bool
 	// InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not
 	InCluster bool
 	// VarnishNamespace is the namespace of the target Varnish pods
@@ -42,6 +44,7 @@ type VarnishCacheInvalidatorOptions struct {
 }
 
 func (vcio *VarnishCacheInvalidatorOptions) addFlags(fs *pflag.FlagSet) {
+	fs.BoolVar(&vcio.IsLocal, "isLocal", false, "IsLocal is only a flag for local development")
 	fs.StringVar(&vcio.VarnishNamespace, "varnishNamespace", "default",
 		"VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace")
 	fs.StringVar(&vcio.VarnishLabel, "varnishLabel", "app=varnish",

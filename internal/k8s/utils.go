@@ -3,6 +3,9 @@ package k8s
 import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	"os"
+	"path/filepath"
 )
 
 // addVarnishPod add a pod string to varnishPods *[]*string
@@ -33,8 +36,14 @@ func getConfig() (*rest.Config, error) {
 	var config *rest.Config
 	var err error
 
-	if config, err = rest.InClusterConfig(); err != nil {
-		return nil, err
+	if opts.IsLocal {
+		if config, err = clientcmd.BuildConfigFromFlags("", filepath.Join(os.Getenv("HOME"), ".kube", "config")); err != nil {
+			return nil, err
+		}
+	} else {
+		if config, err = rest.InClusterConfig(); err != nil {
+			return nil, err
+		}
 	}
 
 	return config, nil
