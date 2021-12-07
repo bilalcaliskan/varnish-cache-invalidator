@@ -37,23 +37,19 @@ Please check all the command line arguments on **Configuration** section. Requir
 varnish-cache invalidator requires Kustomize for in-kubernetes installations. You can refer [here](https://kustomize.io/) for
 Kustomize installation.
 
-Varnish-cache-invalidator can be run inside a Kubernetes cluster to multiplex requests for in-cluster Varnish containers.
-You can use [deployment/invalidator](deployment/invalidator) folder to deploy it with sample configuration. For that, please
-run below command in the [deployment/invalidator](deployment/invalidator) directory:
+If you run below command in the [deployment](deployment) directory, it will take following actions:
+- Deploy varnish-cache-invalidator in the default namespace
+- Deploy varnish instance with sample [default.vcl](deployment/varnish/default.vcl) for testing purposes in the default namespace
+- Deploy nginx instance for testing purposes in the default namespace
+
+Here is the command:
 ```shell
 $ kustomize build . | kubectl apply -f -
 ```
 
-If you need to also deploy Varnish on Kubernetes, you can use [deployment/varnish](deployment/varnish) folder to deploy it
-with sample [default.vcl](deployment/varnish/default.vcl). For that, please run below command in the [deployment/varnish](deployment/varnish)
-directory:
-```shell
-$ kustomize build . | kubectl apply -f -
-```
-
-[deployment/varnish](deployment/varnish) directory will help you to spin up an in-cluster cache solution quickly. It will also deploy a sample
-Nginx with 2 replicas. When you make a GET request to the varnish instance with proper header, you will get following response. Notice **X-Cache**
-and **X-Cache-Hits** response headers. This indicates that our requests are successfully hitting the varnish:
+After all of the deployments are succeeded, when you make a GET request to the varnish instance with proper header,
+you will get following response. Notice **X-Cache** and **X-Cache-Hits** response headers. This indicates that our
+requests are successfully hitting the varnish:
 ```shell
 $ curl ${WORKER_NODE_IP}:${VARNISH_NODE_PORT} -H "Host: nginx.default.svc" -v
 ... omitted
@@ -61,6 +57,12 @@ Age: 22
 X-Cache: HIT
 X-Cache-Hits: 12
 ... omitted
+```
+
+And yes, you can deploy each component separately to the Kubernetes with previous command on relevant directory. For example
+if you just want to deploy varnish-cache-invalidator, run below command in [deployment/invalidator](deployment/invalidator) directory:
+```shell
+$ kustomize build . | kubectl apply -f -
 ```
 
 ### Standalone
