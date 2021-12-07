@@ -36,7 +36,7 @@ func main() {
 	// below check ensures that if our Varnish instances inside kubernetes or not
 	if opts.InCluster {
 		logger.Info("will use kubernetes pod instances, running pod informer to fetch pods")
-		// k8s.InitK8sTypes()
+		k8s.InitK8sTypes()
 		go k8s.RunPodInformer()
 	} else {
 		splitted := strings.Split(opts.TargetHosts, ",")
