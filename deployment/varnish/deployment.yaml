@@ -3,21 +3,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: varnish-cache
+  name: varnish
   namespace: default
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: varnish-cache
+      app: varnish
   template:
     metadata:
-      name: varnish-cache
+      name: varnish
       labels:
-        app: varnish-cache
+        app: varnish
     spec:
       containers:
-        - name: varnish-cache
+        - name: varnish
           image: varnish:7.0.1
           imagePullPolicy: IfNotPresent
           env:

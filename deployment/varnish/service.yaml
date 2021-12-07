@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: varnish-cache
+  name: varnish
   namespace: default
 spec:
   ports:
@@ -11,4 +11,5 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app: varnish-cache
+    app: varnish
+  type: NodePort

@@ -3,8 +3,8 @@ vcl 4.1;
 import directors;
 import std;
 
-backend default {
-    .host = "varnish-cache:80";
+backend nginx {
+    .host = "nginx.default.svc:80";
 }
 
 sub vcl_init {
@@ -12,7 +12,7 @@ sub vcl_init {
     # Typically used to initialize VMODs.
 
     new vdir = directors.round_robin();
-    vdir.add_backend(default);
+    vdir.add_backend(nginx);
 }
 
 sub vcl_pipe {
@@ -224,8 +224,8 @@ sub vcl_recv {
 
 
     # Backend declaration
-    if (req.http.host == "varnish-cache") {
-        set req.backend_hint = default;
+    if (req.http.host == "nginx.default.svc") {
+        set req.backend_hint = nginx;
         if (! req.url ~ "/") {
             return(pass);
         }

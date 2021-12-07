@@ -6,6 +6,8 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
+  - nginx_deployment.yaml
+  - nginx_service.yaml
 
 configMapGenerator:
   - name: varnish-config
