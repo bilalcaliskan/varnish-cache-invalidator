@@ -51,6 +51,18 @@ directory:
 $ kustomize build . | kubectl apply -f -
 ```
 
+[deployment/varnish](deployment/varnish) directory will help you to spin up an in-cluster cache solution quickly. It will also deploy a sample
+Nginx with 2 replicas. When you make a GET request to the varnish instance with proper header, you will get following response. Notice **X-Cache**
+and **X-Cache-Hits** response headers. This indicates that our requests are successfully hitting the varnish:
+```shell
+$ curl ${WORKER_NODE_IP}:${VARNISH_NODE_PORT} -H "Host: nginx.default.svc" -v
+... omitted
+Age: 22
+X-Cache: HIT
+X-Cache-Hits: 12
+... omitted
+```
+
 ### Standalone
 You can use binary method to manage standalone Varnish instances, not in Kubernetes. Binary can
 be downloaded from [Releases](https://github.com/bilalcaliskan/nginx-conf-generator/releases) page.
