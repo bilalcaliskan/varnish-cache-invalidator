@@ -24,7 +24,7 @@ spec:
         - command: [ "./main" ]
           args: [
               "--varnishNamespace", "default",
-              "--varnishLabel", "'app=varnish'",
+              "--varnishLabel", "app=varnish",
               "--inCluster=true"
           ]
           image: 'docker.io/bilalcaliskan/varnish-cache-invalidator:latest'
