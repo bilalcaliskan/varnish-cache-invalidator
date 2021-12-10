@@ -9,12 +9,15 @@ import (
 )
 
 func purgeHandler(w http.ResponseWriter, r *http.Request) {
-	var successCount int
-	var response string
+	var (
+		successCount, failureCount int
+		httpResponse               string
+	)
+
 	logger = logger.With(zap.String("requestMethod", "PURGE"))
 	purgePath := r.Header.Get("purge-path")
 	if purgePath == "" {
-		logger.Error("Unable to make a PURGE request to Varnish targets, header purge-path must be set!",
+		logger.Error("unable to make a PURGE request to Varnish targets, header purge-path must be set!",
 			zap.String("requestMethod", "PURGE"))
 		http.Error(w, "Header purge-path must be set!", http.StatusBadRequest)
 		return
@@ -22,38 +25,44 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 
 	purgeDomain := r.Header.Get("purge-domain")
 	if purgeDomain == "" {
-		logger.Error("Unable to make a PURGE request to Varnish targets, header purge-domain must be set!")
+		logger.Error("unable to make a PURGE request to Varnish targets, header purge-domain must be set!")
 		http.Error(w, "Header purge-domain must be set!", http.StatusBadRequest)
 		return
 	}
 
 	for _, v := range options.VarnishInstances {
-		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
+		// fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
+		logger.Debug(*v)
+		fullUrl := fmt.Sprintf("http://192.168.49.2:30654%s", purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
-		req.Host = purgeDomain
+		req.Host = "nginx.default.svc"
 
-		logger.Info("Making PURGE request", zap.String("targetHost", *v))
+		logger.Info("making PURGE request", zap.String("url", fullUrl))
 		res, err := client.Do(req)
 		if err != nil {
-			logger.Error("An error occurred while making PURGE request", zap.String("targetHost", *v),
+			logger.Error("an error occurred while making PURGE request", zap.String("url", fullUrl),
 				zap.String("error", err.Error()))
+			failureCount++
 		}
 
-		if res != nil && res.StatusCode == http.StatusOK {
+		if res.StatusCode == http.StatusOK {
 			successCount++
 		}
 	}
 
 	if successCount == len(options.VarnishInstances) {
-		logger.Info("All PURGE requests succeeded on Varnish pods!", zap.Int("successCount", successCount))
+		logger.Info("all PURGE requests succeeded on Varnish pods!", zap.Int("successCount", successCount),
+			zap.Int("failureCount", failureCount))
+		httpResponse = fmt.Sprintf("All PURGE requests succeeded on Varnish pods!\nSucceeded request = %d\n"+
+			"Failed request = %d\n", successCount, failureCount)
 		w.WriteHeader(http.StatusOK)
 	} else {
-		logger.Warn("One or more Varnish PURGE requests failed", zap.Int("successCount", successCount),
+		logger.Warn("one or more Varnish PURGE requests failed", zap.Int("successCount", successCount),
 			zap.Int("failureCount", len(options.VarnishInstances)-successCount))
-		response = fmt.Sprintf("One or more Varnish PURGE requests failed, check the logs!\nSucceeded request = %d\n"+
-			"Failed request = %d", successCount, len(options.VarnishInstances)-successCount)
+		httpResponse = fmt.Sprintf("One or more Varnish PURGE requests failed, check the logs!\nSucceeded request = %d\n"+
+			"Failed request = %d\n", successCount, failureCount)
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	writeResponse(w, response)
+	writeResponse(w, httpResponse)
 }

@@ -149,15 +149,6 @@ sub vcl_deliver {
     return (deliver);
 }
 
-sub vcl_purge {
-    # Only handle actual PURGE HTTP methods, everything else is discarded
-    if (req.method == "PURGE") {
-    # restart request
-        set req.http.X-Purge = "Yes";
-        return(restart);
-    }
-}
-
 sub vcl_synth {
     if (resp.status == 720) {
         # We use this special error status 720 to force redirects with 301 (permanent) redirects
@@ -201,7 +192,11 @@ sub vcl_recv {
     # Normalize the query arguments
     set req.url = std.querysort(req.url);
 
+    # Purge logic
     if (req.method == "PURGE") {
+        if (req.http.purge-domain) {
+            set req.http.host = req.http.purge-domain;
+        }
         return (purge);
     }
 
@@ -237,8 +232,8 @@ sub vcl_backend_response {
     # Here you clean the response headers, removing silly Set-Cookie headers
     # and other mistakes your backend does.
 
-    set beresp.ttl = 5m;
-    set beresp.grace = 30m;
+    #set beresp.ttl = 5m;
+    #set beresp.grace = 30m;
 
     # Don't cache 50x responses
     if (beresp.status == 500 || beresp.status == 502 || beresp.status == 503 || beresp.status == 504) {
