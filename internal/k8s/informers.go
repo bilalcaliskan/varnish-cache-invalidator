@@ -70,10 +70,10 @@ func RunPodInformer() {
 				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == opts.VarnishNamespace {
 					if pod.Status.PodIP != "" {
 						podUrl := fmt.Sprintf(PodUrl, pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
-						logger.Info("Adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
+						logger.Info("adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
 						addVarnishPod(&options.VarnishInstances, &podUrl)
 					} else {
-						logger.Warn("Varnish pod does not have an ip address yet, skipping add operation",
+						logger.Warn("varnish pod does not have an ip address yet, skipping add operation",
 							zap.String("pod", pod.Name), zap.String("namespace", pod.Namespace))
 					}
 				}
@@ -88,10 +88,10 @@ func RunPodInformer() {
 				if key == varnishLabelKey && value == varnishLabelValue && oldPod.ResourceVersion != newPod.ResourceVersion &&
 					oldPod.Namespace == opts.VarnishNamespace {
 					if oldPod.Status.PodIP == "" && newPod.Status.PodIP != "" {
-						logger.Info("Assigned an ip address to the pod, adding to varnishPods slice", zap.String("pod", newPod.Name),
+						logger.Info("assigned an ip address to the pod, adding to varnishPods slice", zap.String("pod", newPod.Name),
 							zap.String("namespace", newPod.Namespace), zap.String("ipAddress", newPod.Status.PodIP))
 						podUrl := fmt.Sprintf(PodUrl, newPod.Status.PodIP, newPod.Spec.Containers[0].Ports[0].ContainerPort)
-						logger.Info("Adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
+						logger.Info("adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
 						addVarnishPod(&options.VarnishInstances, &podUrl)
 					}
 				}
@@ -102,7 +102,7 @@ func RunPodInformer() {
 			labels := pod.GetLabels()
 			for key, value := range labels {
 				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == opts.VarnishNamespace {
-					logger.Info("Varnish pod is deleted, removing from varnishPods slice", zap.String("pod", pod.Name),
+					logger.Info("varnish pod is deleted, removing from varnishPods slice", zap.String("pod", pod.Name),
 						zap.String("namespace", pod.Namespace))
 					podUrl := fmt.Sprintf(PodUrl, pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
 					index, found := findVarnishPod(options.VarnishInstances, podUrl)
