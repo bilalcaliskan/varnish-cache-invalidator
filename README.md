@@ -13,7 +13,7 @@ instances at the same time to manage the cache properly. If you are using Varnis
 
 varnish-cache-invalidator can be used for standalone Varnish instances or Varnish pods inside a Kubernetes cluster.
 
-**Standalone mode**
+**Standalone mode**  
 In that mode, varnish-cache-invalidator multiplexes requests on static standalone Varnish instances which are provided
 with **--targetHosts** flag. This flag gets comma seperated list of hosts.
 
@@ -23,7 +23,7 @@ Please check all the command line arguments on **Configuration** section. Requir
 --targetHosts
 ```
 
-**Kubernetes mode**
+**Kubernetes mode**  
 In that mode, varnish-cache-invalidator discovers kube-apiserver for running [Varnish](https://github.com/varnishcache/varnish-cache) pods inside
 Kubernetes and multiplexes **PURGE** requests on them at the same time to manage the cache properly.
 
