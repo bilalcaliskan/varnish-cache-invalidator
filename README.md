@@ -75,8 +75,8 @@ $ ./varnish-cache-invalidator --inCluster=false --targetHosts 10.0.0.100:6081,10
 ```
 
 ## Configuration
-Varnish-cache-invalidator can be customized with several command line arguments. You can pass command line arguments via
-[sample deployment file](deployment/invalidator/sample.yaml). Here is the list of arguments you can pass:
+Varnish-cache-invalidator can be customized with several command line arguments. You can check [sample in-Kubernetes deployment 
+file](deployment/invalidator/deployment.yaml) for how it goes. Here is the list of arguments you can pass:
 
 ```
 --inCluster                 bool        InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not,
