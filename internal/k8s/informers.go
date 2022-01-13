@@ -20,7 +20,7 @@ const PodUrl = "http://%s:%d"
 
 var (
 	restConfig *rest.Config
-	clientSet  *kubernetes.Clientset
+	ClientSet  *kubernetes.Clientset
 	err        error
 	logger     *zap.Logger
 	opts       *options.VarnishCacheInvalidatorOptions
@@ -29,16 +29,6 @@ var (
 func init() {
 	opts = options.GetVarnishCacheInvalidatorOptions()
 	logger = logging.GetLogger()
-	logger.Info("initializing kube client")
-	if restConfig, err = getConfig(); err != nil {
-		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
-	}
-	if clientSet, err = getClientSet(restConfig); err != nil {
-		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
-	}
-
-	logger = logger.With(zap.Bool("inCluster", opts.InCluster), zap.String("masterIp", restConfig.Host),
-		zap.String("varnishLabel", opts.VarnishLabel), zap.String("varnishNamespace", opts.VarnishNamespace))
 }
 
 // InitK8sTypes initializes the required k8s types rest.Config and kubernetes.ClientSet
@@ -49,14 +39,17 @@ func InitK8sTypes() {
 		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
 	}
 
-	if clientSet, err = getClientSet(restConfig); err != nil {
+	if ClientSet, err = getClientSet(restConfig); err != nil {
 		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
 	}
+
+	logger = logger.With(zap.Bool("inCluster", opts.InCluster), zap.String("masterIp", restConfig.Host),
+		zap.String("varnishLabel", opts.VarnishLabel), zap.String("varnishNamespace", opts.VarnishNamespace))
 }
 
 // RunPodInformer continuously watches kube-apiserver with shared informer for Pod resources, then does necessary updates
 // on VarnishInstances slice on Add/Update/Delete conditions
-func RunPodInformer() {
+func RunPodInformer(clientSet kubernetes.Interface) {
 	varnishLabelKey := strings.Split(opts.VarnishLabel, "=")[0]
 	varnishLabelValue := strings.Split(opts.VarnishLabel, "=")[1]
 
