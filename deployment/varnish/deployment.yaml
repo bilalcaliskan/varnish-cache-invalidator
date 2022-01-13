@@ -26,12 +26,12 @@ spec:
             - containerPort: 80
           volumeMounts:
             - mountPath: /etc/varnish/default.vcl
-              name: varnish-config
+              name: varnish-kubeconfig
               subPath: default.vcl
       volumes:
-        - name: varnish-config
+        - name: varnish-kubeconfig
           configMap:
-            name: varnish-config
+            name: varnish-kubeconfig
             items:
               - key: default.vcl
                 path: default.vcl

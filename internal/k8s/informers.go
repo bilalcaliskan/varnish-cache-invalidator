@@ -12,39 +12,19 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 )
 
 const PodUrl = "http://%s:%d"
 
 var (
-	restConfig *rest.Config
-	ClientSet  *kubernetes.Clientset
-	err        error
-	logger     *zap.Logger
-	opts       *options.VarnishCacheInvalidatorOptions
+	logger *zap.Logger
+	opts   *options.VarnishCacheInvalidatorOptions
 )
 
 func init() {
 	opts = options.GetVarnishCacheInvalidatorOptions()
 	logger = logging.GetLogger()
-}
-
-// InitK8sTypes initializes the required k8s types rest.Config and kubernetes.ClientSet
-func InitK8sTypes() {
-	logger.Info("initializing kube client")
-
-	if restConfig, err = getConfig(); err != nil {
-		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
-	}
-
-	if ClientSet, err = getClientSet(restConfig); err != nil {
-		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
-	}
-
-	logger = logger.With(zap.Bool("inCluster", opts.InCluster), zap.String("masterIp", restConfig.Host),
-		zap.String("varnishLabel", opts.VarnishLabel), zap.String("varnishNamespace", opts.VarnishNamespace))
 }
 
 // RunPodInformer continuously watches kube-apiserver with shared informer for Pod resources, then does necessary updates

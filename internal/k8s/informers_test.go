@@ -16,6 +16,11 @@ type FakeAPI struct {
 	Namespace string
 }
 
+/*func (fAPI *FakeAPI) deletePod(name string) error {
+	// gracePeriodSeconds := int64(0)
+	return fAPI.ClientSet.CoreV1().Pods(fAPI.Namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
+}*/
+
 func (fAPI *FakeAPI) createPod(name, ip string) (*v1.Pod, error) {
 	pod := &v1.Pod{
 		TypeMeta: metav1.TypeMeta{
@@ -57,11 +62,10 @@ func (fAPI *FakeAPI) createPod(name, ip string) (*v1.Pod, error) {
 func fakeAPI() *FakeAPI {
 	client := fake.NewSimpleClientset()
 	api := &FakeAPI{ClientSet: client, Namespace: "default"}
-
 	return api
 }
 
-func TestRunPodInformer(t *testing.T) {
+func TestRunPodInformerCreatePod(t *testing.T) {
 	t.Parallel()
 	api := fakeAPI()
 	assert.NotNil(t, api)
@@ -70,14 +74,14 @@ func TestRunPodInformer(t *testing.T) {
 		caseName, podName, ip string
 	}{
 		{
-			caseName: "caseNonEmptyIP",
-			ip:   "10.0.0.15",
-			podName: "varnish-pod-1",
+			caseName: "caseNonEmptyIPcreatePod",
+			ip:       "10.0.0.15",
+			podName:  "varnish-pod-1",
 		},
 		{
-			caseName: "caseEmptyIP",
-			ip:   "",
-			podName: "varnish-pod-2",
+			caseName: "caseEmptyIPcreatePod",
+			ip:       "",
+			podName:  "varnish-pod-2",
 		},
 	}
 
@@ -90,8 +94,57 @@ func TestRunPodInformer(t *testing.T) {
 			pod, err := api.createPod(tc.podName, tc.ip)
 			assert.Nil(t, err)
 			assert.NotNil(t, pod)
+
+			/*err = api.deletePod(tc.podName)
+			assert.Nil(t, err)*/
+		})
+	}
+
+	<-time.After(10 * time.Second)
+}
+
+/*func TestRunPodInformerDeletePod(t *testing.T) {
+	t.Parallel()
+	api := fakeAPI()
+	assert.NotNil(t, api)
+
+	cases := []struct {
+		caseName, podName, ip string
+	}{
+		{
+			caseName: "case1",
+			ip:   "10.0.0.15",
+			podName: "varnish-pod-1",
+		},
+	}
+
+	go func() {
+		RunPodInformer(api.ClientSet)
+	}()
+
+	for _, tc := range cases {
+		t.Run(tc.caseName, func(t *testing.T) {
+			pod, err := api.createPod(tc.podName, tc.ip)
+			assert.Nil(t, err)
+			assert.NotNil(t, pod)
+
+			err = api.deletePod(tc.podName)
+			assert.Nil(t, err)
 		})
 	}
 
 	<- time.After(10 * time.Second)
+}*/
+
+func TestGetClientSet(t *testing.T) {
+	opts.IsLocal = true
+	opts.KubeConfigPath = "../../mock/kubeconfig"
+
+	restConfig, err := GetConfig()
+	assert.Nil(t, err)
+	assert.NotNil(t, restConfig)
+
+	clientSet, err := GetClientSet(restConfig)
+	assert.Nil(t, err)
+	assert.NotNil(t, clientSet)
 }

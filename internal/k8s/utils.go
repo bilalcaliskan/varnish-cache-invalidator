@@ -4,8 +4,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"os"
-	"path/filepath"
 )
 
 // addVarnishPod add a pod string to varnishPods *[]*string
@@ -31,13 +29,13 @@ func removeVarnishPod(varnishPods *[]*string, index int) {
 	*varnishPods = append((*varnishPods)[:index], (*varnishPods)[index+1:]...)
 }
 
-// getConfig initializes and returns the *rest.Config
-func getConfig() (*rest.Config, error) {
+// GetConfig initializes and returns the *rest.Config
+func GetConfig() (*rest.Config, error) {
 	var config *rest.Config
 	var err error
 
 	if opts.IsLocal {
-		if config, err = clientcmd.BuildConfigFromFlags("", filepath.Join(os.Getenv("HOME"), ".kube", "config")); err != nil {
+		if config, err = clientcmd.BuildConfigFromFlags("", opts.KubeConfigPath); err != nil {
 			return nil, err
 		}
 	} else {
@@ -49,8 +47,8 @@ func getConfig() (*rest.Config, error) {
 	return config, nil
 }
 
-// getClientSet initializes and returns *kubernetes.Clientset using *rest.Config
-func getClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
+// GetClientSet initializes and returns *kubernetes.Clientset using *rest.Config
+func GetClientSet(config *rest.Config) (*kubernetes.Clientset, error) {
 	clientSet, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, err

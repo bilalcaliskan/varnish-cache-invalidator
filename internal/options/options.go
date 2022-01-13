@@ -2,6 +2,8 @@ package options
 
 import (
 	"github.com/spf13/pflag"
+	"os"
+	"path/filepath"
 )
 
 var vcio = &VarnishCacheInvalidatorOptions{}
@@ -23,6 +25,8 @@ func GetVarnishCacheInvalidatorOptions() *VarnishCacheInvalidatorOptions {
 type VarnishCacheInvalidatorOptions struct {
 	// IsLocal is only for local development
 	IsLocal bool
+	// KubeConfigPath is also only for local development to specify kubeconfig
+	KubeConfigPath string
 	// InCluster is the boolean flag if varnish-cache-invalidator is running inside cluster or not
 	InCluster bool
 	// VarnishNamespace is the namespace of the target Varnish pods
@@ -45,6 +49,8 @@ type VarnishCacheInvalidatorOptions struct {
 
 func (vcio *VarnishCacheInvalidatorOptions) addFlags(fs *pflag.FlagSet) {
 	fs.BoolVar(&vcio.IsLocal, "isLocal", false, "IsLocal is only a flag for local development")
+	fs.StringVar(&vcio.KubeConfigPath, "kubeConfigPath", filepath.Join(os.Getenv("HOME"), "mock", "kubeconfig"),
+		"KubeConfigPath is also only for local development to specify kubeconfig while developing varnish-cache-invalidator")
 	fs.StringVar(&vcio.VarnishNamespace, "varnishNamespace", "default",
 		"VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace")
 	fs.StringVar(&vcio.VarnishLabel, "varnishLabel", "app=varnish",
