@@ -16,7 +16,7 @@ func TestRunMetricsServer(t *testing.T) {
 		select {
 		case c := <-errChan:
 			t.Error(c)
-		case <-time.After(10 * time.Second):
+		case <-time.After(5 * time.Second):
 			t.Log("success")
 			return
 		}
