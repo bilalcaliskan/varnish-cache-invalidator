@@ -33,9 +33,9 @@ func RunPodInformer(clientSet kubernetes.Interface) {
 	varnishLabelKey := strings.Split(opts.VarnishLabel, "=")[0]
 	varnishLabelValue := strings.Split(opts.VarnishLabel, "=")[1]
 
-	informerFactory := informers.NewSharedInformerFactory(clientSet, time.Second*30)
-	podInformer := informerFactory.Core().V1().Pods()
-	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+	informerFactory := informers.NewSharedInformerFactory(clientSet, 30*time.Second)
+	podInformer := informerFactory.Core().V1().Pods().Informer()
+	podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			pod := obj.(*v1.Pod)
 			labels := pod.GetLabels()
@@ -43,7 +43,8 @@ func RunPodInformer(clientSet kubernetes.Interface) {
 				if key == varnishLabelKey && value == varnishLabelValue && pod.Namespace == opts.VarnishNamespace {
 					if pod.Status.PodIP != "" {
 						podUrl := fmt.Sprintf(PodUrl, pod.Status.PodIP, pod.Spec.Containers[0].Ports[0].ContainerPort)
-						logger.Info("adding pod url to the varnishPods slice", zap.String("podUrl", podUrl))
+						logger.Info("adding pod url to the varnishPods slice", zap.String("pod", pod.Name),
+							zap.String("namespace", pod.Namespace), zap.String("podUrl", podUrl))
 						addVarnishPod(&options.VarnishInstances, &podUrl)
 					} else {
 						logger.Warn("varnish pod does not have an ip address yet, skipping add operation",

@@ -7,6 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
+	"sync"
 	"testing"
 	"time"
 )
@@ -16,10 +17,27 @@ type FakeAPI struct {
 	Namespace string
 }
 
-/*func (fAPI *FakeAPI) deletePod(name string) error {
-	// gracePeriodSeconds := int64(0)
-	return fAPI.ClientSet.CoreV1().Pods(fAPI.Namespace).Delete(context.TODO(), name, metav1.DeleteOptions{})
-}*/
+func (fAPI *FakeAPI) deletePod(name string) error {
+	gracePeriodSeconds := int64(0)
+	return fAPI.ClientSet.CoreV1().Pods(fAPI.Namespace).Delete(context.TODO(), name, metav1.DeleteOptions{GracePeriodSeconds: &gracePeriodSeconds})
+}
+
+func (fAPI *FakeAPI) getPod(name string) (*v1.Pod, error) {
+	return fAPI.ClientSet.CoreV1().Pods(fAPI.Namespace).Get(context.Background(), name, metav1.GetOptions{})
+}
+
+func (fAPI *FakeAPI) updatePod(name, podIP string) (*v1.Pod, error) {
+	pod, _ := fAPI.getPod(name)
+	pod.Status.PodIP = podIP
+	pod.ResourceVersion = "123456"
+
+	pod, err := fAPI.ClientSet.CoreV1().Pods(fAPI.Namespace).Update(context.TODO(), pod, metav1.UpdateOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return pod, nil
+}
 
 func (fAPI *FakeAPI) createPod(name, ip string) (*v1.Pod, error) {
 	pod := &v1.Pod{
@@ -65,8 +83,7 @@ func fakeAPI() *FakeAPI {
 	return api
 }
 
-func TestRunPodInformerCreatePod(t *testing.T) {
-	t.Parallel()
+func TestRunPodInformer(t *testing.T) {
 	api := fakeAPI()
 	assert.NotNil(t, api)
 
@@ -91,50 +108,50 @@ func TestRunPodInformerCreatePod(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.caseName, func(t *testing.T) {
-			pod, err := api.createPod(tc.podName, tc.ip)
-			assert.Nil(t, err)
-			assert.NotNil(t, pod)
+			var wg sync.WaitGroup
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				pod, err := api.createPod(tc.podName, tc.ip)
+				assert.Nil(t, err)
+				assert.NotNil(t, pod)
+			}()
+			wg.Wait()
 
-			/*err = api.deletePod(tc.podName)
-			assert.Nil(t, err)*/
+			time.Sleep(2 * time.Second)
+
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				createdPod, err := api.getPod(tc.podName)
+				assert.NotNil(t, createdPod)
+				assert.Nil(t, err)
+			}()
+			wg.Wait()
+
+			time.Sleep(2 * time.Second)
+
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				updatedPod, err := api.updatePod(tc.podName, "10.0.0.15")
+				assert.NotNil(t, updatedPod)
+				assert.Nil(t, err)
+			}()
+			wg.Wait()
+
+			time.Sleep(2 * time.Second)
+
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				err := api.deletePod(tc.podName)
+				assert.Nil(t, err)
+			}()
+			wg.Wait()
 		})
 	}
-
-	<-time.After(10 * time.Second)
 }
-
-/*func TestRunPodInformerDeletePod(t *testing.T) {
-	t.Parallel()
-	api := fakeAPI()
-	assert.NotNil(t, api)
-
-	cases := []struct {
-		caseName, podName, ip string
-	}{
-		{
-			caseName: "case1",
-			ip:   "10.0.0.15",
-			podName: "varnish-pod-1",
-		},
-	}
-
-	go func() {
-		RunPodInformer(api.ClientSet)
-	}()
-
-	for _, tc := range cases {
-		t.Run(tc.caseName, func(t *testing.T) {
-			pod, err := api.createPod(tc.podName, tc.ip)
-			assert.Nil(t, err)
-			assert.NotNil(t, pod)
-
-			err = api.deletePod(tc.podName)
-			assert.Nil(t, err)
-		})
-	}
-
-	<- time.After(10 * time.Second)
-}*/
 
 func TestGetClientSet(t *testing.T) {
 	opts.IsLocal = true
