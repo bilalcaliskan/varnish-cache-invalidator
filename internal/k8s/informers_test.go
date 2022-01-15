@@ -17,6 +17,12 @@ type FakeAPI struct {
 	Namespace string
 }
 
+func getFakeAPI() *FakeAPI {
+	client := fake.NewSimpleClientset()
+	api := &FakeAPI{ClientSet: client, Namespace: "default"}
+	return api
+}
+
 func (fAPI *FakeAPI) deletePod(name string) error {
 	gracePeriodSeconds := int64(0)
 	return fAPI.ClientSet.CoreV1().Pods(fAPI.Namespace).Delete(context.TODO(), name, metav1.DeleteOptions{GracePeriodSeconds: &gracePeriodSeconds})
@@ -77,14 +83,8 @@ func (fAPI *FakeAPI) createPod(name, ip string) (*v1.Pod, error) {
 	return pod, nil
 }
 
-func fakeAPI() *FakeAPI {
-	client := fake.NewSimpleClientset()
-	api := &FakeAPI{ClientSet: client, Namespace: "default"}
-	return api
-}
-
 func TestRunPodInformer(t *testing.T) {
-	api := fakeAPI()
+	api := getFakeAPI()
 	assert.NotNil(t, api)
 
 	cases := []struct {
