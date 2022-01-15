@@ -21,10 +21,6 @@ func TestRunMetricsServer(t *testing.T) {
 	go func() {
 		for i := 0; i <= 5; i++ {
 			if i == 5 {
-				// * Error()  = Fail()    + Log()
-				// * Errorf() = Fail()    + Logf()
-				// * Fatal()  = FailNow() + Log()
-				// * Fatalf() = FailNow() + Logf()
 				t.Errorf("connection to port %d could not succeeded, not retrying!\n", opts.MetricsPort)
 				return
 			}
@@ -33,9 +29,11 @@ func TestRunMetricsServer(t *testing.T) {
 			if err != nil {
 				t.Logf("connection to port %d could not succeeded, retrying...\n", opts.MetricsPort)
 				time.Sleep(1 * time.Second)
+				continue
 			}
 
 			connChan <- true
+			return
 		}
 	}()
 
