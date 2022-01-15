@@ -17,8 +17,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 	logger = logger.With(zap.String("requestMethod", "PURGE"))
 	purgePath := r.Header.Get("purge-path")
 	if purgePath == "" {
-		logger.Error("unable to make a PURGE request to Varnish targets, header purge-path must be set!",
-			zap.String("requestMethod", "PURGE"))
+		logger.Error("unable to make a PURGE request to Varnish targets, header purge-path must be set!")
 		http.Error(w, "Header purge-path must be set!", http.StatusBadRequest)
 		return
 	}
@@ -31,11 +30,11 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, v := range options.VarnishInstances {
-		// fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
-		logger.Debug(*v)
-		fullUrl := fmt.Sprintf("http://192.168.49.2:30654%s", purgePath)
+		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
+		// fullUrl := fmt.Sprintf("http://192.168.49.2:30654%s", purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
-		req.Host = "nginx.default.svc"
+		// req.Host = "nginx.default.svc"
+		req.Host = purgeDomain
 
 		logger.Info("making PURGE request", zap.String("url", fullUrl))
 		res, err := client.Do(req)

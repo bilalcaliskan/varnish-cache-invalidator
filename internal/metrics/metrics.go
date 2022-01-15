@@ -24,13 +24,6 @@ func init() {
 
 // RunMetricsServer provides an endpoint, exports prometheus metrics using prometheus client golang
 func RunMetricsServer() error {
-	defer func() {
-		err := logger.Sync()
-		if err != nil {
-			panic(err)
-		}
-	}()
-
 	router := mux.NewRouter()
 	metricServer := &http.Server{
 		Handler:      router,
