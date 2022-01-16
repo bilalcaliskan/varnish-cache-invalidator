@@ -14,7 +14,6 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 		httpResponse               string
 	)
 
-	logger = logger.With(zap.String("requestMethod", "PURGE"))
 	purgePath := r.Header.Get("purge-path")
 	if purgePath == "" {
 		logger.Error("unable to make a PURGE request to Varnish targets, header purge-path must be set!")
@@ -31,8 +30,8 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, v := range options.VarnishInstances {
 		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
-		// fullUrl := fmt.Sprintf("http://192.168.49.2:30654%s", purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
+		// fullUrl := fmt.Sprintf("http://192.168.49.2:30654%s", purgePath)
 		// req.Host = "nginx.default.svc"
 		req.Host = purgeDomain
 
@@ -60,7 +59,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 			zap.Int("failureCount", len(options.VarnishInstances)-successCount))
 		httpResponse = fmt.Sprintf("One or more Varnish PURGE requests failed, check the logs!\nSucceeded request = %d\n"+
 			"Failed request = %d\n", successCount, failureCount)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
 	writeResponse(w, httpResponse)
