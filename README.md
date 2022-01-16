@@ -13,7 +13,7 @@ instances at the same time to manage the cache properly. If you are using Varnis
 
 varnish-cache-invalidator can be used for standalone Varnish instances or Varnish pods inside a Kubernetes cluster.
 
-**Standalone mode**  
+**Standalone mode**
 In that mode, varnish-cache-invalidator multiplexes requests on static standalone Varnish instances which are provided
 with **--targetHosts** flag. This flag gets comma seperated list of hosts.
 
@@ -23,7 +23,7 @@ Please check all the command line arguments on **Configuration** section. Requir
 --targetHosts
 ```
 
-**Kubernetes mode**  
+**Kubernetes mode**
 In that mode, varnish-cache-invalidator discovers kube-apiserver for running [Varnish](https://github.com/varnishcache/varnish-cache) pods inside
 Kubernetes and multiplexes **PURGE** requests on them at the same time to manage the cache properly.
 
@@ -75,7 +75,7 @@ $ ./varnish-cache-invalidator --inCluster=false --targetHosts 10.0.0.100:6081,10
 ```
 
 ## Configuration
-Varnish-cache-invalidator can be customized with several command line arguments. You can check [sample in-Kubernetes deployment 
+Varnish-cache-invalidator can be customized with several command line arguments. You can check [sample in-Kubernetes deployment
 file](deployment/invalidator/deployment.yaml) for how it goes. Here is the list of arguments you can pass:
 
 ```
@@ -84,7 +84,7 @@ file](deployment/invalidator/deployment.yaml) for how it goes. Here is the list 
 --varnishNamespace          string      VarnishNamespace is the namespace of the target Varnish pods, defaults to default namespace
 --varnishLabel              string      VarnishLabel is the label to select proper Varnish pods, defaults to app=varnish
 --targetHosts               string      TargetHosts used when our Varnish instances(comma seperated) are not running in Kubernetes as
-                                        a pod, required for standalone Varnish instances, defaults to ''
+                                        a pod, required for standalone Varnish instances, defaults to 'http://127.0.0.1:6081'
 --serverPort                int         ServerPort is the web server port of the varnish-cache-invalidator, defaults to 3000
 --metricsPort               int         MetricsPort is the port of the metrics server, defaults to 3001
 --writeTimeoutSeconds       int         WriteTimeoutSeconds is the write timeout of the both web server and metrics server, defaults to 10

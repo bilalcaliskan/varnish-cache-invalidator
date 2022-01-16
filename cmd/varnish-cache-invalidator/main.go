@@ -17,8 +17,11 @@ import (
 )
 
 var (
-	logger *zap.Logger
-	opts   *options.VarnishCacheInvalidatorOptions
+	logger     *zap.Logger
+	opts       *options.VarnishCacheInvalidatorOptions
+	restConfig *rest.Config
+	clientSet  *kubernetes.Clientset
+	err        error
 )
 
 func init() {
@@ -30,32 +33,24 @@ func init() {
 
 func main() {
 	defer func() {
-		if err := logger.Sync(); err != nil {
+		if err = logger.Sync(); err != nil {
 			panic(err)
 		}
 	}()
 
-	logger.Info("initializing kube client")
-
-	var (
-		restConfig *rest.Config
-		clientSet  *kubernetes.Clientset
-		err        error
-	)
-
-	if restConfig, err = k8s.GetConfig(); err != nil {
-		logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
-	}
-
-	if clientSet, err = k8s.GetClientSet(restConfig); err != nil {
-		logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
-	}
-
-	logger = logger.With(zap.Bool("inCluster", opts.InCluster), zap.String("masterIp", restConfig.Host),
-		zap.String("varnishLabel", opts.VarnishLabel), zap.String("varnishNamespace", opts.VarnishNamespace))
-
 	// below check ensures that if our Varnish instances inside kubernetes or not
 	if opts.InCluster {
+		logger.Info("initializing kube client")
+		if restConfig, err = k8s.GetConfig(); err != nil {
+			logger.Fatal("fatal error occurred while initializing kube client", zap.String("error", err.Error()))
+		}
+
+		if clientSet, err = k8s.GetClientSet(restConfig); err != nil {
+			logger.Fatal("fatal error occurred while getting client set", zap.String("error", err.Error()))
+		}
+
+		logger = logger.With(zap.Bool("inCluster", opts.InCluster), zap.String("masterIp", restConfig.Host),
+			zap.String("varnishLabel", opts.VarnishLabel), zap.String("varnishNamespace", opts.VarnishNamespace))
 		logger.Info("will use kubernetes pod instances, running pod informer to fetch pods")
 		go k8s.RunPodInformer(clientSet)
 	} else {
@@ -67,12 +62,12 @@ func main() {
 	}
 
 	go func() {
-		if err := metrics.RunMetricsServer(); err != nil {
+		if err = metrics.RunMetricsServer(); err != nil {
 			logger.Fatal("fatal error occured while spinning metrics server", zap.Error(err))
 		}
 	}()
 
-	if err := web.RunWebServer(); err != nil {
+	if err = web.RunWebServer(); err != nil {
 		logger.Fatal("fatal error occured while spinning web server", zap.Error(err))
 	}
 }
