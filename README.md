@@ -109,7 +109,7 @@ varnish-cache-invalidator uses [client-go](https://github.com/kubernetes/client-
 with `kube-apiserver`. [client-go](https://github.com/kubernetes/client-go) uses the [service account token](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
 mounted inside the Pod at the `/var/run/secrets/kubernetes.io/serviceaccount` path while initializing the client.
 
-If you have RBAC enabled on your cluster, when you applied the sample deployment file [deployment/sample.yaml](deployment/invalidator/sample.yaml),
+If you have RBAC enabled on your cluster, when you followed the deployment steps on [Kubernetes section](#kubernetes),
 it will create required serviceaccount and clusterrolebinding and then use that serviceaccount to be used
 by our varnish-cache-invalidator pods.
 
