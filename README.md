@@ -3,7 +3,10 @@
 [![Docker pulls](https://img.shields.io/docker/pulls/bilalcaliskan/varnish-cache-invalidator)](https://hub.docker.com/r/bilalcaliskan/varnish-cache-invalidator/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bilalcaliskan/varnish-cache-invalidator)](https://goreportcard.com/report/github.com/bilalcaliskan/varnish-cache-invalidator)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_varnish-cache-invalidator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_varnish-cache-invalidator)
-[![codecov](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalcaliskan/varnish-cache-invalidator)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_varnish-cache-invalidator&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_varnish-cache-invalidator)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_varnish-cache-invalidator&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_varnish-cache-invalidator)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_varnish-cache-invalidator&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_varnish-cache-invalidator)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bilalcaliskan_varnish-cache-invalidator&metric=coverage)](https://sonarcloud.io/summary/new_code?id=bilalcaliskan_varnish-cache-invalidator)
 [![Release](https://img.shields.io/github/release/bilalcaliskan/varnish-cache-invalidator.svg)](https://github.com/bilalcaliskan/varnish-cache-invalidator/releases/latest)
 [![Go version](https://img.shields.io/github/go-mod/go-version/bilalcaliskan/varnish-cache-invalidator)](https://github.com/bilalcaliskan/varnish-cache-invalidator)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -100,7 +103,7 @@ This project requires below tools while developing:
 - [pre-commit](https://pre-commit.com/)
 - [golangci-lint](https://golangci-lint.run/usage/install/) - required by [pre-commit](https://pre-commit.com/)
 
-After installed [pre-commit](https://pre-commit.com/), it's strongly adviced to run below command in the root directory 
+After installed [pre-commit](https://pre-commit.com/), it's strongly adviced to run below command in the root directory
 of the project:
 ```shell
 $ pre-commit install
