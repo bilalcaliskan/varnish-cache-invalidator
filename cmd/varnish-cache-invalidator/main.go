@@ -13,6 +13,7 @@ import (
 	"varnish-cache-invalidator/internal/web"
 
 	"github.com/dimiro1/banner"
+	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
 
