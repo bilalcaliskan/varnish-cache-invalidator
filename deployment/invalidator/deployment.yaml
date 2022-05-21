@@ -21,7 +21,7 @@ spec:
     spec:
       serviceAccountName: varnish-cache-invalidator
       containers:
-        - command: [ "./main" ]
+        - command: [ "varnish-cache-invalidator" ]
           args: [
               "--varnishNamespace", "default",
               "--varnishLabel", "app=varnish",
