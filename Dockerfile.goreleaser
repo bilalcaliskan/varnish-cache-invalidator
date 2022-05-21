@@ -1,0 +1,6 @@
+FROM gcr.io/distroless/static:nonroot-amd64
+
+ADD varnish-cache-invalidator /usr/local/bin/varnish-cache-invalidator
+
+USER nonroot
+ENTRYPOINT ["varnish-cache-invalidator"]
