@@ -36,7 +36,7 @@ builds:
     binary: varnish-cache-invalidator
     ldflags:
       - -s -w -X github.com/bilalcaliskan/varnish-cache-invalidator/cmd.GitVersion={{ .Version }} -X github.com/bilalcaliskan/varnish-cache-invalidator/cmd.gitCommit={{ .ShortCommit }}  -X github.com/bilalcaliskan/varnish-cache-invalidator/cmd.buildDate={{ .CommitDate }}
-    main: ./main.go
+    main: ./cmd/varnish-cache-invalidator/main.go
 
 release:
   github:
