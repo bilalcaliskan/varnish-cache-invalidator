@@ -29,7 +29,7 @@ func purgeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, v := range options.VarnishInstances {
-		fullUrl := fmt.Sprintf("%s%s", *v, purgePath)
+		fullUrl := fmt.Sprintf("%s%s", v, purgePath)
 		req, _ := http.NewRequest("PURGE", fullUrl, nil)
 		// fullUrl := fmt.Sprintf("http://192.168.49.2:30654%s", purgePath)
 		// req.Host = "nginx.default.svc"

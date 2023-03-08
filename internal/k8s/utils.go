@@ -7,17 +7,17 @@ import (
 )
 
 // addVarnishPod add a pod string to varnishPods *[]*string
-func addVarnishPod(varnishPods *[]*string, pod *string) {
+func addVarnishPod(varnishPods *[]string, pod *string) {
 	_, found := findVarnishPod(*varnishPods, *pod)
 	if !found {
-		*varnishPods = append(*varnishPods, pod)
+		*varnishPods = append(*varnishPods, *pod)
 	}
 }
 
 // findVarnishPod finds the specific pod string in varnishPods []*string
-func findVarnishPod(varnishPods []*string, pod string) (int, bool) {
+func findVarnishPod(varnishPods []string, pod string) (int, bool) {
 	for i, item := range varnishPods {
-		if pod == *item {
+		if pod == item {
 			return i, true
 		}
 	}
@@ -25,7 +25,7 @@ func findVarnishPod(varnishPods []*string, pod string) (int, bool) {
 }
 
 // removeVarnishPod removes the Varnish pod string from varnishPods *[]*string
-func removeVarnishPod(varnishPods *[]*string, index int) {
+func removeVarnishPod(varnishPods *[]string, index int) {
 	*varnishPods = append((*varnishPods)[:index], (*varnishPods)[index+1:]...)
 }
 

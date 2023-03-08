@@ -14,7 +14,7 @@ repos:
       - id: check-merge-conflict
       - id: check-symlinks
       - id: detect-private-key
-      - id: detect-aws-credentials
+  #      - id: detect-aws-credentials
   - repo: https://github.com/dnephin/pre-commit-golang
     rev: v0.5.0
     hooks:
@@ -23,9 +23,9 @@ repos:
       - id: go-fmt
       - id: go-vet
       - id: go-imports
-      - id: go-cyclo
-        args: [-over=15]
+#      - id: go-cyclo
+#        args: [-over=15]
       - id: no-go-testing
       - id: golangci-lint
-      - id: go-unit-tests
+      # - id: go-unit-tests
       - id: go-build

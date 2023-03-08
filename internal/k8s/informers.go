@@ -35,7 +35,7 @@ func RunPodInformer(clientSet kubernetes.Interface) {
 
 	informerFactory := informers.NewSharedInformerFactory(clientSet, 30*time.Second)
 	podInformer := informerFactory.Core().V1().Pods().Informer()
-	podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+	_, _ = podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			pod := obj.(*v1.Pod)
 			labels := pod.GetLabels()
