@@ -1,6 +1,6 @@
 module varnish-cache-invalidator
 
-go 1.17
+go 1.20
 
 require (
 	github.com/dimiro1/banner v1.1.0
