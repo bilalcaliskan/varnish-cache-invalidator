@@ -1,6 +1,7 @@
 FROM gcr.io/distroless/static:nonroot-amd64
 
 ADD varnish-cache-invalidator /usr/local/bin/varnish-cache-invalidator
+ADD build/ci/banner.txt /usr/local/banner.txt
 
 USER nonroot
 ENTRYPOINT ["varnish-cache-invalidator"]

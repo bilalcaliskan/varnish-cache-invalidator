@@ -25,6 +25,10 @@ changelog:
 archives:
   - replacements:
       amd64: x86_64
+    files:
+      - build/ci/banner.txt
+      - README.md
+      - LICENSE
 
 builds:
   - id: binary
@@ -35,8 +39,8 @@ builds:
       - amd64
     binary: varnish-cache-invalidator
     ldflags:
-      - -s -w -X github.com/bilalcaliskan/varnish-cache-invalidator/cmd.GitVersion={{ .Version }} -X github.com/bilalcaliskan/varnish-cache-invalidator/cmd.gitCommit={{ .ShortCommit }}  -X github.com/bilalcaliskan/varnish-cache-invalidator/cmd.buildDate={{ .CommitDate }}
-    main: ./cmd/varnish-cache-invalidator/main.go
+      - -s -w -X github.com/bilalcaliskan/varnish-cache-invalidator/main.GitVersion={{ .Version }} -X github.com/bilalcaliskan/varnish-cache-invalidator/main.gitCommit={{ .ShortCommit }}  -X github.com/bilalcaliskan/varnish-cache-invalidator/main.buildDate={{ .CommitDate }}
+    main: ./main.go
 
 release:
   github:
@@ -51,6 +55,8 @@ dockers:
     goos: linux
     goarch: amd64
     use: docker
+    extra_files:
+      - build/ci/banner.txt
     build_flag_templates:
       - --pull
       - --platform=linux/amd64
