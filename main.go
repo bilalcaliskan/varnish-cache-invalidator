@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"strings"
 	"varnish-cache-invalidator/internal/k8s"
@@ -29,7 +28,7 @@ var (
 func init() {
 	logger = logging.GetLogger()
 	opts = options.GetVarnishCacheInvalidatorOptions()
-	bannerBytes, _ := ioutil.ReadFile("banner.txt")
+	bannerBytes, _ := os.ReadFile("banner.txt")
 	banner.Init(os.Stdout, true, false, strings.NewReader(string(bannerBytes)))
 }
 

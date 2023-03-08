@@ -2,12 +2,13 @@ package metrics
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRunMetricsServer(t *testing.T) {
@@ -45,7 +46,7 @@ func TestRunMetricsServer(t *testing.T) {
 			resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:%d/metrics", opts.MetricsPort))
 			assert.Nil(t, err)
 
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			assert.Nil(t, err)
 			assert.NotEmpty(t, string(body))
 			return
