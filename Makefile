@@ -42,7 +42,7 @@ run-lint: lint-golangci-lint lint-revive
 .PHONY: lint-golangci-lint
 lint-golangci-lint:
 	$(info running golangci-lint...)
-	$(LOCAL_BIN)/golangci-lint -v run ./... || (echo golangci-lint returned an error, exiting!; sh -c 'exit 1';)
+	$(LOCAL_BIN)/golangci-lint --timeout 3m0s -v run ./... || (echo golangci-lint returned an error, exiting!; sh -c 'exit 1';)
 
 .PHONY: lint-revive
 lint-revive:
