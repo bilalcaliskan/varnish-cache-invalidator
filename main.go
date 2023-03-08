@@ -2,8 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"os"
 	"strings"
 	"varnish-cache-invalidator/internal/k8s"
@@ -11,6 +9,9 @@ import (
 	"varnish-cache-invalidator/internal/metrics"
 	"varnish-cache-invalidator/internal/options"
 	"varnish-cache-invalidator/internal/web"
+
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 
 	"github.com/dimiro1/banner"
 	_ "go.uber.org/automaxprocs"
@@ -57,9 +58,7 @@ func main() {
 	} else {
 		splitted := strings.Split(opts.TargetHosts, ",")
 		logger.Info("will use standalone varnish instances", zap.Any("instances", splitted))
-		for _, v := range splitted {
-			options.VarnishInstances = append(options.VarnishInstances, &v)
-		}
+		options.VarnishInstances = append(options.VarnishInstances, splitted...)
 	}
 
 	go func() {

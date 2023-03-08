@@ -1,15 +1,16 @@
 package options
 
 import (
-	"github.com/spf13/pflag"
 	"os"
 	"path/filepath"
+
+	"github.com/spf13/pflag"
 )
 
 var vcio = &VarnishCacheInvalidatorOptions{}
 
 // VarnishInstances keeps pointer of varnish instances' ip:port information
-var VarnishInstances []*string
+var VarnishInstances []string
 
 func init() {
 	vcio.addFlags(pflag.CommandLine)

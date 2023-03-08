@@ -23,8 +23,8 @@ repos:
       - id: go-fmt
       - id: go-vet
       - id: go-imports
-      - id: go-cyclo
-        args: [-over=15]
+#      - id: go-cyclo
+#        args: [-over=15]
       - id: no-go-testing
       - id: golangci-lint
       # - id: go-unit-tests

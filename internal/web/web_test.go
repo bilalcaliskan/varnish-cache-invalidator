@@ -2,7 +2,6 @@ package web
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +9,8 @@ import (
 	"testing"
 	"time"
 	"varnish-cache-invalidator/internal/options"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPurgeHandler(t *testing.T) {
@@ -30,7 +31,7 @@ func TestPurgeHandler(t *testing.T) {
 				return
 			}
 		}))
-		options.VarnishInstances = append(options.VarnishInstances, &mockServer.URL)
+		options.VarnishInstances = append(options.VarnishInstances, mockServer.URL)
 		wg.Done()
 		<-mockChan
 		defer mockServer.Close()
