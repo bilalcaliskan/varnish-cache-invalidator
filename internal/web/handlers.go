@@ -3,7 +3,8 @@ package web
 import (
 	"fmt"
 	"net/http"
-	"varnish-cache-invalidator/internal/options"
+
+	"github.com/bilalcaliskan/varnish-cache-invalidator/internal/options"
 
 	"go.uber.org/zap"
 )

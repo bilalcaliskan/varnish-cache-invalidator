@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"varnish-cache-invalidator/internal/logging"
-	"varnish-cache-invalidator/internal/options"
+
+	"github.com/bilalcaliskan/varnish-cache-invalidator/internal/logging"
+	"github.com/bilalcaliskan/varnish-cache-invalidator/internal/options"
 
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"

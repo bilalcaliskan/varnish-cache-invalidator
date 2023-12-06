@@ -8,7 +8,8 @@ import (
 	"sync"
 	"testing"
 	"time"
-	"varnish-cache-invalidator/internal/options"
+
+	"github.com/bilalcaliskan/varnish-cache-invalidator/internal/options"
 
 	"github.com/stretchr/testify/assert"
 )

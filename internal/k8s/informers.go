@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"varnish-cache-invalidator/internal/logging"
-	"varnish-cache-invalidator/internal/options"
+
+	"github.com/bilalcaliskan/varnish-cache-invalidator/internal/logging"
+	"github.com/bilalcaliskan/varnish-cache-invalidator/internal/options"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
